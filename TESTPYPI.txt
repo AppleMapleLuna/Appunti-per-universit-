@@ -108,3 +108,7 @@ on:
 
 on push tags dice che l'operaio staccanovista (quando fa un push su github) devi iniziare il tuo lavoro 
 C'è un botto qua, però invece di usare twine ogni push aggiorna il coso 
+
+ORA AL PRIMO LANCIO E DELLE MODIFICHE DI GITHUB e lui fa tutto per noi 
+Ci sarà all'esame? ...Boh.
+
