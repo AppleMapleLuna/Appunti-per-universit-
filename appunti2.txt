@@ -1,0 +1,928 @@
+01/10/2026
+PRINT E RETURN HANNO RUOLI DIVERSI
+
+Qualsiasi funzione ritorna, ma se non diciamo nulla dà come ritorno NONE/NULL,
+Il valore non esiste, quindi nella ricorsione fa un errore perché non si può sommare NONE.
+
+SE MANCA L'ARRESTO, LA FUNZIONE CONTINUA
+
+def senza_fine(n):
+    return senza_fine(n+1)
+senza_fine(0)
+# PYTHON DA' UN RECURSION ERROR
+# Come fa a capirlo? Chiama tante volte finché finisce la memoria.
+# Quali sono i problemi? 1. Finisce la memoria, 2. Non c'è caso base o induttivo.
+
+def conto(n)
+    if n==0:
+        return 0
+    return conto(n-1)
+conto(10)
+
+QUINDI?
+CASO BASE DEVE ESSERE RAGGIUNGIBILE
+
+quindi condizione if else 
+
+ASPETTO RAMIFICATO DELLA RICORSIONE: ALBERI
+Quanti nodi ci sono per albero?
+
+def conta_nodi(nodo):
+    totale = 1
+    for figlio in nodo("Figli"):
+        totale+=conta_nodi(figlio)
+    return totale
+
+STRUMANTE IN BASE ALLA FORMA
+- Lista lineare → Un ciclo è spesso più semplice.
+- La ricorsione segue la struttura.
+- Ricorda i risultati già calcolati.
+
+Per una lista semplice c'è anche il ciclo
+Quale prende meno memoria? Ricorsione o iterazione?
+Iterazione prende meno variabili ed è un numero costante di memoria.
+
+Per la ricorsione, ognuna occupa memoria e in alcuni casi si può avere problemi.
+
+= → Fornire valore di default.
+
+RECURSIONError
+esiste
+
+FIBONACCI
+1. Ricorsione
+
+FUNZIONI //////////////////////////////////////////////////////////////////////////////
+Ci sono molti aspetti della funzione.
+
+METTERE SEMPRE I COMMENTI PER LE FUNZIONI
+Li leggono per utilizzare e capire le intenzioni
+
+Una funzione calcola e restituisce.
+
+I default
+def saluta(nome,prefisso="Ciao"):
+    return f"{prefisso}, {nome}"
+print(saluta("Angelo","Buongiorno"))
+# Se me lo passi utilizzo quello, se no metto questo.
+
+I default si valutano una sola volta. Ovvero vengono inizializzati una volta
+
+def aggiungi(x,elementi=[])
+    elementi.append(x)
+    return elementi
+print(aggiungi(1))
+print(aggiungi(2))
+# OUTPUT = 
+# [1]
+# [1,2]
+
+Riutilizza il default il riferimento alla stessa lista!
+Perché esistono? In python non possiamo fare overloading
+ovvero definire una funzione con lo stesso nome con gli stessi parametri ma diversa funzione!
+(Funzionaa per tutto)
+
+Python definisce dinamicamente il concetto di funzione, invece di utilizzarlo fa i defailt
+
+Argomenti keyword dichiarano l'intento
+
+NON SI POSSONO MISCHIARE
+def area_utente(nome,attivo=True):
+    return {"NOME": nome, "Attivo": attivo}
+print(crea_utente(attivo=False,cognome="Smith,nome="Ada")) # Va bene
+print(crea_utente("smith",False,"Ada")) # Errore
+
+SPACCHETTA UN ITERABILE NELLA CHIAMATA
+def volume(a,b,c):
+    return a*b*c
+dati = (2,3,4)
+volume(*dati)
+# equivale a volime 2,3,4
+
+config = {"host":"db.local ", "porta":5432}
+connetti(**config)
+#connetti(host="db.local",porta=5432)
+
+*ARGS **KWARGS
+def registra(evento,*tag,**meta):
+    print(evento)
+    print(tag)
+    print(meta)
+registra("pippo","pluto","paperino",nome="Pippo",cognome="paperino)
+
+/ e * rendono esplicita la modalità
+def invia(messaggio,/,*,urgente=False):
+    return f"{messaggio} | urgente={urgente}"
+invia("ciao",urgente=True)
+
+tutto ciò prima della slash solo posizionale
+tutto ciò dopo * solo keyword
+
+LE FUNZIONI SONO VALORI
+def doppio(x):
+    return x*2
+
+f = doppio
+print(f(3))
+print(f is doppio)
+
+F contiene la funzione doppio e diventa a sua volta la funzione
+
+
+UNA FUNZIONE PUO' RESTITUIRE UNA FUNZIONE
+def scegli_lingua(codice):
+    def italiano():
+        return "ciao"
+    def inglese():
+        return "hello"
+    return italiano if codice == "it" else inglese
+saluto = scegli_lingua("it")
+saluto()
+
+UNA FUNZIONE PUO' RICEVERE UNA CALLBACK
+def applica(funzione,valore):
+    return funzione(valore)
+applica(abs,-3)
+
+# Se passi una funzione e un valore, chiamo la funzione su quel valore e ti dò il risultato
+
+LA FUNZIONE INTERNA CATTURA UNA VARIABILE LIBERA
+def crea_logger(prefisso):
+    def log(messaggio):
+        print(f"{prefisso} {messaggio}")
+    return log
+info = crea_logger("INFO")
+info("Avvio")
+
+SCOPE DI UNA VARIABILE
+Ambiente di vita della variabile → LEGB
+
+↓ = Controlla prima questo, se non c'è passa a quello sotto
+↓ LOCAL - Parametri e nomi definiti in log
+↓ ENCLOSING - prefisso definito in crea_logger
+↓ GLOBAL/BUILT-IN - Cercati solo se non trovati prima
+
+05/10/2026
+FUNZIONI DI ORDINE SUPERIORE
+
+Cos'è una closure? è una funzione all'interno di un'altra funzione che ha
+ accesso a tutti i dati contenuto nella sua enclosed function
+
+UNA VARIABILE LIBERA SEGUE LEGB 
+LEGB = Local Enclosed Global Built-in
+
+Finita questa pipeline di controllo, manda un errore.
+
+UNA CLOSURE PUO' CONSERVARE STATO
+
+Nonlocal:
+
+def crea_contatore():
+    n = 0
+    def prossimo():
+        nonlocal n          # n non è una variabile locale, è quello dentro allo scope!
+                            # se global, prendi la variabile da associare globalmente.
+                            # Se viene tolta c'è errore.
+                            # se m = n + 1 
+        n+=1
+        return n
+    return prossimo
+
+c = crea_contatore()
+c(), c()    # (1,2)
+
+//// Evita di sovrascrivere una variabile
+Il discorso dello scope vale per la lettura, ma per la scrittura va sempre a 
+scrivere rispetto alla scope.
+
+L'assegnamento avrebbe dato una variabile n che avrebbe locale con l'n prossimo.
+
+Anche esiste l'enclosed, dal punto di vista dal LERB, per lui chiede l'n locale perché ha visto l'assegnamento
+
+MAP: APPLICA UNA FUNZIONE IN MODO LAZY
+
+# Non ha un nome e ha limiti di chiave
+def f2w(x)():
+    return +2 # limitata a un'azione
+
+LA MAPPA è UNA FUNZIONE IN PYTHON DI ORDINE SUPERIORE (ovvero che prende in input un'altra opzione)
+quadrati = map(lambda x: x*x, [1,2,3])
+next(quadrati)
+list(quadrati)
+
+la mappa può applicarla a un altro oggetto iterabile applicando a ciascun elemento 
+la funzione passata
+
+map sono pigre perché non srotolano tutto, lo applicano una per una.
+
+quadrati = map(lambda x: x*x, [1,2,3])
+somma2 = map(lambda x:x+2, quadrati)    # applica la funzione ad ogni quadrato, creando catene
+
+for s in somma2:
+    print(s)
+
+Stream programming: invece di programmarli separatemente andiamo ad incastrarle
+
+quadrati = map(lambda x: x*x, [1,2,3])
+Questa lista può anche essere una lista infinita di valori.
+
+Però comunque tutto viene analizzato una a una.
+
+Invece di andare a ciclo di 100000, la mappa fa prima perché li fa prima.
+Manipola e passa, ma non dà nessuna assunzione sul pezzetino della roba e se riesce a passarla.
+
+Una volta consumati non si riutilizzano più.
+
+quadrati = map(lambda x: x*x, [1,2,3])
+somma2 = map(lambda x:x+2, quadrati)    # applica la funzione ad ogni quadrato, creando catene
+
+for s in somma2:
+    print(s)
+
+for s in somma2:
+    print(s)
+# Non stampa nulla!
+
+somma2 è generata una volta dalla map e poi non stampa più.
+
+MAP → I valori si calcolano quando richiesti
+1. Buono in performance
+2. Buono in teoria per iterare su domini infiniti
+
+SI COMUNICA BENE
+def quadrato(x):
+    return x*x
+
+list(map(quadrato,valori))          # Riutilizzabile
+
+list(map(lambda x:x*x, valori))     # Si utilizza una volta e poi si deve reistanziare
+
+lambda contiene una funzione sì
+
+UN GENERATORE PRODUCE VALORI SU RICHIESTA
+
+EAGER
+quadrati = [x*x for x in range (1_000_000)]     # Lista creata sul moment
+print(quadrati)
+
+LAZY
+quadrati = (x*x for x in range(1_000_000))      # Espressione generatrice
+print(quadrati)
+# Genera valori 1 a 1 e stampa solo il generatore
+
+GENERATORE AD ESPRESSIONE
+(expr for x in dati)
+
+FUNZIONE GENERATRICE:
+def ...:
+yield valore
+
+Yield serve a definire funzioni che vengono spezzetate e forniscono dati man mano che chiediamo
+Quindi...
+
+def quadrati_lazy(n):
+    for i in range(n):
+        yield i*i
+
+for i in quadrati_lazy(10):
+    print(i)
+
+RETURN CON LA PROMESSA DI ANDARE INDIETRO
+Yield è come un return, ma smette la funzione e continua da dove è ritornato
+
+my_range(n)
+
+YIELD CREA UNO STATO IN SOSPESO DI UNA FUNZIONE
+
+def due_valori():
+    yield 10
+    yield 20
+ # Ritorno il valore e mi metto in sospeso.
+ #Se mi richiami, mi risveglio da dove ero rimasto e il prossimo diventa 20.
+
+g = due_valori()
+next(g)
+next(g)
+
+CHIAMARE IL GENERATORE NON ESEGUE IL CORPO
+def numeri():
+    print("start")
+    yield 1
+
+g = numeri()
+print(g)
+print("creato")
+
+ # Stampa solo "creato". Se c'è il print(g) stampa solo l'oggetto generatore
+# Per fare start serve next(g)
+
+Se si fa un next sopra next(g) non ci sono più dati e manda un errore
+
+COSA SUCCEDE SE C'E' UN RETURN INSIEME A UN YIELD?
+
+def numeri():
+    print("start")
+    yield 1
+    print("middle)
+    return 2
+
+g = numeri()
+print("creato")
+print(next(g))
+
+# Consuma tutto, incluso il return.
+#Tutto ciò che non è yield viene mangiato.
+
+UN CONTENITORE LAZY CON YIELD
+def conta_fino_a(stop):
+    i = 0
+    while i<stop:
+        yield i
+        i += 1
+
+list(conta_fino_a(4))
+g = conta(2)
+
+Al primo passo fa g = conta(2), ritorna l'oggetto generatore
+iter(g) restituisce g
+next(g) il generatore viene chiamato. Scatena l'ingresso della funzione e fa i = 0 e 
+lo mette in pausa
+seconto next(g) risveglia dal yield e fa i+=1 e ritorna nel while. 1<2 è true e ritorna al yield
+# i = 2           # StopIteration 
+
+LA GENERATOR EXPRESSION RESTA LAZY
+
+quadrati = (x*x for x in range(5))      # Generatore di generatori
+next(quadrati)
+next(quadrati)
+list(quadrati)
+
+LO SCOPE DECIDE QUALI NOMI SONO VISIBILI
+
+Binding → Un nome viene associato a un oggetto
+Lookup → Un uso del nome cerca il binding visibile
+
+LEGB: QUATTRO LIVELLI DI RICERCA
+L - Local
++ Funzione corrente
++ Parametri e assegnamenti della funzione 
+~
+E - Enclosing 
++ Funzione esterne 
++ Binding di funzioni esterne annidate
+~
+G - Global 
++ Modulo globale 
++ Nomi definiti del modulo 
+~
+B - Built-in 
++ namespace builtins  (python) 
++ len, print, range... salvo shadowing
+
+Ogni livello ha una responsabilità
+
+ANCHE I BUILT-IN POSSONO ESSERE MASCHERATI
+
+len = 3
+len([10,20])    # è stato sovrascritto
+# type error: int object is not callable
+
+lookup → trova prima len globale 
+prevenzione → non riusare nomi built-in 
+
+GLOBAL: NOMI DEL MODULO 
+lingua = "it"           # La prima che trova, lo usa
+
+def saluta(nome):
+    if lingua == "it":
+        return f"Ciao, {nome}"
+    return f"Hello, {nome}"
+
+ENCLOSING 
+def crea_saluto(prefisso):
+    def saluta(nome):
+        return f"{prefisso}, {nome}"
+    return "Ciao"
+
+LOCAL 
+def area(base, altezza):
+    risultato = base * altezza /2
+    return risultato 
+
+LE FUNZIONI SORELLE NON CONDIVIDONO I LOCAL 
+def prima():
+    segreto = 42
+def seconda():
+    return segreto
+
+seconda()       # errore NameError
+
+def terza():
+    segreto = 0
+    def prima():
+        nonlocal segreto
+        segreto = 42
+    def seconda():
+        return segreto
+    return prima, seconda 
+p,s = terza()
+print(p())
+print(s())
+
+# Ora ha senso!
+
+SHADOWING: IL NOME PIU' INTERNO VINCE
+
+x = "global"
+
+def esterna():
+    x = "enclosing"
+    def interna():
+        x = "local"
+        return x
+    return interna()
+
+esterna()       # local
+
+Il lookup trova il binding locale 
+stesso nome != stessa variabile
+
+è brutta però perché fa renaming
+
+GLOBAL RIASSEGNA UN BINDING DEL MODULO 
+
+contatore = 0
+def incrementa():
+    global contatore
+    contatore += 1
+
+print(contatore)
+incrementa(contatore)
+print(contatore)
+
+Incrementa contatore 
+
+GLOBAL VS NONLOCAL
+uso la variabile definita a livello di modulo 
+nonlocal uso variabile definita a livello di enclosing 
+
+UN PARAMETRO E' UN BINDING LOCALE 
+
+x = 5
+def cambia(x):
+    print(x)
+    x = "ciao"
+    print(x)
+
+cambia(x)
+print(x)
+
+x è stata cambiata solo dentro la funzione 
+
+IL MODELLO PRECISO E' CALL BY SHARING 
+chiamante → un nome indica un oggetto
+chiamata → Il parametro viene associato allo stesso oggetto
+corpo → mutare l'oggetto e riassegnare il nome sono operazioni diverse 
+
+Non è né il semplice "passaggio per valore" né il classico "passaggio per rierimento".
+
+PREVEDI: MUTARE UN ARGOMENTO LISTA 
+def aggiungi(lista):
+    print(lista)
+    lista.append(3)
+    print(lista)
+
+x = 4
+aggiungi(x)
+print(x)
+
+Perché? CALL BY SHARING: al suo interno abbiamo passato il riferimento a quella lista.
+
+x = variabile che contiene una freccetta alla lista 
+aggiungi chiama il metodo append sull'oggetto riferito alla variabile che x punta, ovvero alla lista 
+Ogni modifica verrà propagata.
+
+E per le int? 
+x = 3 vuol dire un 3 che si riferisce al 3
+Quando viene fatta la stessa cosa che abbiamo fatto sopra con la lista, la x cambia riferimento al numero a cui si riferisce ora.
+
+Le variabili con i numeri sono immutabili sotto CALL BY SHARING 
+
+LE ECCEZIONI SEPARANO ERRORE E GESTIONE
+non si chiamano errori, si chiamano eccezioni.
+
+try:
+    valore = int(testo)
+except ValueError as errore:
+    gestisci(errore)
+else:
+    usa(valore)
+finally:                # Garanzia che verrà finita e fatta questo blocco
+    libera_risorse()
+
+Except → solo se corrisponde
+else → solo senza eccezioni 
+Finally → Sempre 
+
+raise → solleva un'eccezione 
+Si può sollevare un'eccezione sotto l'else
+
+NEL TRY METTI SOLO CIO' CHE PUO' FALLIRE
+
+12/10/2026
+UN DECORATORE AGGIUNGE UN COMPORTAMENTO TRASVERSALE
+Logging → Registra chiamate ed errori
+Timing → Misura la durata 
+Policy → Autorizzazione, cache, retry 
+
+Decora una funzione e cambia il comportamento 
+
+Cosa rende una funzione decoratore? Le funzioni decoratrici sono funzioni che devono essere 
+funzioni di ordine superiori
+
+def traccia(funzione ):
+    def wrapper():
+        print("inizio")
+        risultato = funzione()
+        print("fine")
+        return risultato 
+    return wrapper 
+
+Abbiamo definito una funzione che passata in input una funzione, sfrutta la funzione dentro alla 
+funzione     
+
+@traccia 
+def f():
+...
++ equivalente a fare 
+f = traccia(f)
+
+
+si possono farne altre!
+
+Qual è l'ordine nel momento che chiamo f 
+
+@traccia 
+@log 
+def f():
+...
++ equivalente a fare 
+
+f = traccia(f)
+
+Dall'interno verso l'esterno. La prima funzione che va chiamata è traccia.
+
+@traccia 
+@time   # L'ordine è importante. Time è un decoratore utilizzata per prendere il tempo
+def f():
+    print("funzione f")
+    return 42
+# Se lui prende e ritorna un valore, fa errori. La funzione f è un wrapper di traccia 
+# Modificare la funzione decorata vuol dire modificare tutte le funzioni indipendendi...
+# Come risolverla? *args, **kwargs
+
+Prendo un certo tot e li passo come tupla *args o come dizionario **kwargs 
+
+CLASSI E OGGETTI IN PYTHON 
+Stato, protocolli e gerarchie che restano prevedibili
+
+OOP: stato, comportamento, contratti
+classe → definisce struttura e comportamento 
+oggetto → Istanza con identità e stato 
+Incapsulamento → Espone un'API e protegge invarianti
+Polimorfismo → Stessa operazione, implementazioni diverse 
+
+La classe è un tipo dove noi andiamo a definire la struttura dei nostri oggetti. Data una classe 
+possiamo istanziare oggetti che sono istanza di quella classe. 
+
+API → Application Programming Interface 
+
+Come io, sviluppatore, posso utilizzare in maniera efficiente il tuo codice. 
+
+Questa funzione ha questo nome e questi input 
+
+Poliformismo → Relazioni di parentela tra classi 
+
+UNA CLASSE INTRODUCE UN NUOVO TIPO 
+Namespace 
+
+class Contatore:
+    unita = "click"                 # Attributo di classe 
+    def incrementa(self):           # Funzione? No, sono metodi! Questo è un metodo d'istanza
+                                    # È una funzione definita per tutti gli oggetti di tipo 
+                                    #Contatore. Su di loro posso chiamare questa funzione, non su 
+                                    # altri. 
+        self.valore += 1            # Self! Di solita si chiama "This". Rappresenta l'oggetto su 
+                                    # Su cui stiamo chiamando il nostro metodo.
+
+Cosa rende una funzione un metodo? Un metodo è una funzione definita in una classe. 
+
+class Punto:
+    colore = "rosso"
+    def set_x(self,x):          # Chiama il metodo e passa come argomento 5
+        self.x = x              # self = oggetto su cui abbiamo chiamato il metodo
+                                # Peculiarità di python: x non esiste. Dove l'abbiamo definito?
+                                # Tutta la dinamicità sul python trova realtà a livello di oggetti
+                                # Creiamo un campo popolato a runtime.
+    
+p1 = Punto()                    # Parametro implicito
+p1.set_x(5)                     # è come fare Punto.set_x(p1,5)
+
+p1 ha altre informazioni che possiamo vedere, in particolare a:
+p1.__dict__
+
+questi metodi sono speciali con funzionalità legate all'interprete di python e 
+utilizzate in maniera autonoma.
+
+__dict__ è il dizionario chiave valore. Tutte le volte che si crea un oggetto, dietro le quinte
+python prende il dizionario associato all'istanza e lo modifica aggiungendo la chiave valore 
+
+Perché non ci piace che self.x = x sia in un metodo qualsiasi? Perché possiamo creare una 
+discrepanza tra due oggetti dello stesso tipo ma a definizione sono diversi.
+
+def __init__(self):         # Costruttore 
+    pass 
+
+è un metodo speciale che viene utilizzato automaticamente dall'interprete e che possiamo definire
+
+class Punto:
+    colore = "rosso"            # Campo a livello della classe sta a livello della classe
+    def __init__(self,x,y):     # Chiama il metodo e passa come argomento x e y
+        self.x = x              # self = oggetto su cui abbiamo chiamato il metodo
+        self.y = y              # Peculiarità di python: x non esiste. Dove l'abbiamo definito?
+                                # Tutta la dinamicità sul python trova realtà a livello di oggetti
+                                # Creiamo un campo popolato a runtime.
+    
+# p1 = Punto()                    # Parametro implicito
+# p1.set_x(5)                     # è come fare Punto.set_x(p1,5)
+# print(p1.x)
+
+p1 = Punto(10,5)
+print(p1.x,p1.y)
+print(p1.colore)
+
+Tutto in python è un oggetto, anche la classe. 
+
+Punto.colore = "verde"
+print(p1.colore)
+
+È stato cambiato per la classe.
+
+L'ASSEGNAMENTO CAMBIA LA CLASSE?
+class Profilo:
+    tema = "chiaro"
+p = Profilo()
+p.tema = "scuro"
+
+print(p.tema)
+print(Profilo.tema)
+
+p.tema != Profilo.tema 
+p.tema = "scuro" ma Profilo.tema è ancora "chiaro" 
+
+Se si faceva Profilo.tema = "scuro", tutte e due sarebbero "scuro" 
+
+
+o.field 
+1. Controlla prima __dict__ per vedere se c'è un metodo sull'oggetto o 
+2. Se fallisce, field è un campo della classe di o?
+3. Se fallisce, MRO (Ordine delle classi che io vado a estendere)
+(Se ci sono delle classi genitori, si può andare in ordine da sinistra a destra per vedere se 
+field c'è.)
+4. Se fallisce, __get_attr__() → Metodo speciale come ultima spiaggia
+5. Eccezione 
+
+CHIAMARE LA CLASSE AVVIA L'ISTANZIAZIONE
+1. Chiamata → Punto(2,3)
+2. Creazione → __new__ produce l'istanza 
+3. Inizializzazione → __init__ imposta lo stato, riempie gli stati 
+
+TRE METODI, TRE OGGETTI IMPLICITI 
+Istanza 
+→ Def metodo(self)  # riceve l'istanza 
+Classe 
+→ @classmethod      # riceve cls 
+Statico 
+→ @staticmethod     # Nessun argomento implicito 
+
+Qual è la differenza principale? 
+Istanza → Vuole un oggetto 
+Class method → Vuole la classe 
+static method → Metodi applicati senza un oggetto su cui applicarli. Queste sono funzioni.
+
+class testo:
+    @staticmethod 
+    def pulisci(s):         # Metodo statico e non ha il campo self. È distaccato dalla classe 
+        return s.strip()
+
+    @classmethod 
+    def vuoto(cls):         # Metodo di classe perché è stato annotato. Rispetto alla sinistra,
+        return cls("")      # Per convenzione si chiama cls ed è il self. Il primo argomento è 
+                            # l'oggetto d'istanza sulla classe stessa 
+                            # Il cls viene usato qua per creare un oggetto 
+
+Si può creare oggetti runtime dove l'oggetto non è ancora definito staticamente. 
+
+COSTRUZIONE E VALIDAZIONE
+class Data:
+    def formato_valido(testo):
+        parti = testo.split("-)
+        return len(parti) == 3+
+
+    @classmethod
+    def da_iso(cls,testo ):
+        a,m,g = map(int,testo.split("-"))
+        return cls(a,m,g)
+    
+d1 = Data.da_iso("2024-06-15")
+print("data d1: d1.anno,d1.mese,d1.giorno)
+
+DI SOLITO __NEW_ DELEGA A SUPER 
+classe tracciata:
+def _new__(cls, *args,**kwargs):
+    print("creazione")
+    istanza = super()
+
+Di base il metodo new è definito ma si può customizzarla
+
+PRIVACY E' UNA CONVENZIONE 
+nome → pubblico 
+_nome → interno per convenzione, privato che nessuno deve toccare ma accessibile 
+__nome → nome mangling, te lo nascondo così che non lo vedi (equivale a private)
+Visibilità = sapere come e quando le variabili sono accessibili e da dove 
+
+Niente in python è veramente privato.
+
+class Archivio:
+    def __init__(self):
+        self.__token = "abc"
+a = Archivio()
+a.__token                   # AttributeError
+a._Archivio__token          # "abc", ha cambiato tutti gli attributi e li sostituisce con quello
+
+15/10/2026
+nome = pubblico 
+_nome = interno per convenzione 
+__nome = name mangling 
+
+In python, per segnalare la visibilità si usa una notazione basata sull'underscore. 
+Se c'è solo una, è una variabile interna della classe che non dovrebbe essere utilizzata ma si può
+__nome
+
+__dir__(): Ci dà tutti gli aspetti dell'oggetto
+
+underscore underscore = rimpiazza il nome di un attribito con qualcos'altro 
+_nomeclasse_metodo = 
+
+I METODI SPECIALI IMPLEMENTANO protocolliTesto
+str(x) 
+x. set.__atr()
+
+x[i] = x.__getitem__(i)
+x+y 9
+
+OPERAOTRE
+x+y = x.d__add(y)
+
+__repr__
+__str__
+__len__
+__iter__
+__getitem__
+__call__
+__eq__       # Concetto di uguaglianza. x==y
+
+
+altre
+print(d1==d4)
+print((x)
+
+se tutto è vero, va bene. Se c'è un errore, falso.
+
+L'uguaglianza chiede che l'oggetto ha lo stesso valore, non lo stesso riferimento
+
+x = 10000000000000000000000000 + 500
+y = 10000000000000000000000000+ 500
+
+print(x==y) # True 
+print(x is y)   # Anche lui?! Ma sono oggetti diversi...
+
+Il motivo per cui è così è perché su python queste sono invariabili e quindi ottimizza
+
+Ma se si fa così:
+x = 10
+y = 10
+z = x+y 
+w = 20
+
+print(z==w) # True 
+print(z is w ) # False, non sono lo stesso intero. L'ottimizzazione è crollata.
+
+Non sa il valore della somma e quindi non la ottimizza.
+
+GETATTRIBUTE E GETATTR NON COINCIDONO
+__getattribute__ → Intercetta sempre 
+__getattr__ → Solo il l
+
+Sono i getter di una classe. Estraggono il contenuto dentro la classe.
+
+Chiama un metodo che vuole settore l'attributo di un oggetotl
+
+IMPORTANTE: I CAMPI DELLA CLASSE DEVONO ESSERE PRIVATI
+Dobbiamo proteggere l'uso appropriato del codice 
+
+Perché super? Se non ha sollevato un'eccezione, si può propagare la richiesta si può
+utilizzare il metodo del padre o della madre.
+
+Se no questa si potrebbe ripetere!
+
+def __setattr__(self,name,value):
+    if name =="_mese" and (value<1 or value>12):
+        raise ValueError("Il mese deve essere compreso tra 1 e 12)
+    super().__setattr__(name,value)
+
+Chi è il tipo genitore? 
+Object = La classe madre di TUTTI GLI OGGETTI. Tutti gli oggetti sono discendenti da questo. 
+
+Non le abbiamo definite noi, le ha definite object! 
+
+class Data(object)
+
+è figlia di object! Con super diciamo che l'oggetto è lui, quando fai la tua ricerca di quello che 
+serve, non guardarlo come data, guardalo come object!
+
+non si potrebbe fare object.__setattr__(self,name,value)?
+sì, ma è brutto e ci vincola!
+
+In realtà c'è qualcuno prima di object, meglio dire super. 
+
+Tutti devono andare a chiamare la __setattr__ se fanno l'assegnazione del valore.
+di base cambia il dizionario ma aggiunge comunque.
+
+Si può utilizzarlo per cammuffare
+
+Vogliamo che il programmatore li veda come pubblici ma che non siano pubblici.
+
+L'assenza dell'underscore su 
+if name == "anno" and value < 0:
+    raise [...]
+if not name.startswith("__"):
+    name = f"__{self.__class__.__name__}__"
+
+è possibile! con qualche extra codice
+Al momento qualsiasi valore si può aggiungere 
+
+if not name.startswith("__") amd not name.startswith("_Data__"):
+    name = f"{...}"
+
+Versione aggiustata
+
+__getattr__
+viene chiamata se tutto il resto fallisce 
+
+def __getattr__(self,name):
+    if name =="giorno":
+        return self.__giorno
+    [...]
+    else:
+        raise AttributeError("L'attribut non esiste,)
+    elif name == "stagione":
+        [...]
+
+Non dobbiamo permettere a chi usa le classi di modificare la classe.
+
+INTERCETTARE OGNI ATTRIBUTO AUMENTA IL RISCHIO
+def __getattribute__():
+
+Entrambi hanno i loro pro e contro, ma se vogliamo più potere sulla classe si può fare questo.
+Questa è quella che viene sempre chiamata.
+
+Ma se stagione fa parte del dizionario o della classe, non arriva mai alla get attr.
+
+looperemo in eterno se faccio self.__giorno...
+
+La catena di if è COSI' noiosa e brutta, che facciamo??
+
+PROPERTY
+è un decoratore che va a decorare le nostre funzioni per renderle o dei 
+
+@property 
+def get_giorno(self):
+    return self.__giorno
+
+@anno.setter 
+def get_anno(self,value):
+    if value<0:
+        raisee ValueError("...)
+
+Cosa ritorna property?
+Ritorna il descrittore anche se sono pubblici o no 
+
+@property conserva la sintassi di attributo 
+
+def celsius(self):
+    return self._celsius
+
+@celsius.setter 
+def celsius(self,valore):
+    self._celsius = valore

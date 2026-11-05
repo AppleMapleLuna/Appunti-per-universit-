@@ -1,0 +1,705 @@
+17/09/2026
+print("Hello world!")
+
+Editor di testo
+cos'è?
+> Una superficie dove scrivere e correggere caratteri
+> Serve estensione .py per python
+> Non sceglie python e non avvia il programma da solo
+
+Terminale
+su windows:
+> cd percorso della cartella
+> py ciao.py
+
+Chi esegue il programma?
+Quello che sta leggendo l'istruzione è l'interprete Python che non fa altro che interpretare 
+o eseguire il nostro script python
+
+La bellezza di un interprete sta nella possibilità di eseguire un programma su più ambienti di 
+sviluppo.
+
+Python è un linguaggio di scripting. Ha una modalità interattiva su cmd
+
+C:\Users\Administrator\Documents\CODING\python\2026-2027>python
+Python 3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> exot
+Traceback (most recent call last):
+  File "<python-input-0>", line 1, in <module>
+    exot
+NameError: name 'exot' is not defined. Did you mean: 'exit'?
+>>> print("Hello World")
+Hello World
+>>> return 0
+  File "<python-input-2>", line 1
+    return 0
+    ^^^^^^^^
+SyntaxError: 'return' outside function
+>>> print("Hello World")
+Hello World
+>>>
+
+Dalla tastiera all'output
+1. L'editor aggiorna il file ciao.py
+2. La shell riceve python3 ciao.py
+3. Python legge il file una istruzione alla volta
+4. Il terminale visualizza output o errore
+
+Installare Python!!!! (Io l'ho già fatto)
+
+VS code non contiene Python, ma è un Editor estendibile che organizza il lavoro.
+Serve ovviamente l'estensione Python
+
+DEBUGGING
+Pallino rosso = fermo
+> Run debugger
+
+Usare un IDE perché?
+1. Sintassi colorata
+2. Autocompletamento tramite AI generativa
+3. Strumento di diagnostica
+
+Importante capire il risultato finale
+
+OUTPUT vecchio = salva il file!!
+File non trovato = Cartella giusta?
+Comando assente = C'è Python?
+Modulo assente = Stesso interprete?
+
+~ • ~ • ~
+
+Caratteristiche fondamentali di Python...
+- Variabili in Python possono cambiari tipi quanto vogliono
+
+3 assi diversi, non sinonimi
+Tipizzazione dinamica - variabili dinamici
+Esecuzione tramite VM/Interprete/JIT - Invece di creare un eseguibile usa un interprete, quindi è un po' più lento ma almeno è crossplatform
+Astrazione ad alto livello - Meno poteri ma più facile da capire.
+
+La dinamicità non nasce con il Web.
+Python è più vecchio di Javascript!
+
+Cosa perdiamo? Controllo
+int x = 42
+x = "ciao" // errore
+
+Su python si può fare, ma gli errori vengono fuori durante l'esecuzione oppure li fa notare l'IDE
+x = 42
+x = "ciao"
+if usa_numero:
+  print(x+1)    # Dà un errore di tipo
+
+È importante sapere questo!
+
+Alto livello non significa dinamico
+Mi allontano solo di più dalla macchina.
+
+Python non è tutto interpretato. 
+In CPython si parte dal codice sorgente, ma invece di compilarlo in linguaggio macchina, usa il suo interprete per compilarlo in bytecode 
+per poi essere letto e interpretato dalla macchina virtuale.
+Serve anche per la performance, ma serve principalmente per creare una versione più macchina 
+
+Se devi utilizzare il file più volte, averlo compilato è più conveniente.
+
+Tipizzazione dinamica = Feedback rapido, codice conciso, interfacce flessibili
+Problemi: 
+Errori di tipo su percorsi poco eseguibili - Test automatici e buona copertura
+Contratti meno espliciti nel codice - Type hints, documentazione e strumenti
+Prestazioni meno prevedibili - Serve misurazione, profiling e scelte mirate
+
+~ • ~ • ~
+
+DUCK TYPING
+Supporti l'operazione? Ti comporti come un'anatra?
+L'unica cosa che chiediamo è che supporta l'operazione
+Quindi conta ciò che può fare.
+
+def primo(seq):
+    return seq[0]
+
+primo([10,20])
+primo((7,8))
+primo("ciao")
+
+In questo caso è che può fare seq[0]
+
+Il comportamento può essere scelto a runtime!
+
+~ • ~ • ~
+
+Perché Python?
+- Scrivi, esegui, osserva, correggi.
+- Stesso risultato, diversa complessità esposta
+
+Idee:
+1. Oggetti hanno tipo (I nomi possono essere associati a oggetti diversi)
+2. Assi indipendenti (Tipizzazione, esecuzione e astrazione non sono sinonimi)
+3. Flessibilità va governata (test, type hints e strumenti rendono espliciti i contratti)
+
+TIPIZZAZIONE
+Il tipo dà significato ai dati
+
+x : int = 42
+Dichiari a python che x contiene un intero
+se metti x = "asd" dopo quello si arrabbia
+
+x : int = 42
+x = "asd"
+print(x)
+
+Ma te lo fa comunque
+
+def area(r: float) -> float:
+  return 3.14 * r * r
+
+Si può fare così per dichiarare tipi
+
+def doppio(x:int) -> int:
+    return x*2
+
+print(doppio("ha"))
+Ripete haha due volte e si frega degli int
+
+CONVERSIONE in python
+x = 3 + int("59")
+x = 62
+
+Si può fare!
+
+Python non permette di fare conversioni implicite, ma esplicite si possono fare
+
+JAVASCRIPT → 3 + "58" = "358"
+PYTHON → 3 + int("58") = 61
+
+Type safety vs Memory safety
+
+
+
+21/09/2026
+
+x = x+1
+
+Concetto di variabile
+"È una scatolina"
+python è un linguaggio dinamico, ricorda
+x cambia riferimento.
+Si riferisce a un contenuto in memoria. Ogni modifica alla variabile vuol dire cambiare riferimento.
+
+Il contenuto della variabile dove viene contenuta? Nella RAM.
+
+8 spazi per byte, per gli interi abbiamo 
+
+x ha un'allocazione di memoria che dipende dal tipo di dato. 
+Python ha detto che gli interi sono infiniti fino a quanto ci sta in memoria
+INT = 32 bit
+
+In python il float è il double.
+DOUBLE = 64 bit
+
+In python ha abbandonato il carattere binario e ora utilizza l'UNICODE
+Come funziona? Invece di gestire i byte, c'è un codice univoco standardizzato.
+
+→ Concetto di freccia è importante per l'esame ←
+
+~ • ~ • ~ • ~ • ~
+
+TIPI DI BASE
+
+INT
+FLOAT 
+COMPLEX = Parte reale + immaginaria
+BOOL
+
+----------
+
+if 0.1 + 0.2 == 0.3:
+    print("True")
+else:
+    print("False") # False
+
+isinstance(True,int) # True, → Verità è un intero
+
+(3+4j).real,(3+4j).imag # (3.0,4.0)
+
+----------
+
+print(7/2)
+print(7//2)
+print(-7//2)
+print(round(2.5))
+print(round(3.5))
+3.5
+3
+-4
+2 → Perché? Boh
+4
+
+Una sequenza si legge per posizione
+
+xs = [10,20,30,40,50]
+xs[1]
+xs[-1] # Ultimo
+xs[1:4] # Prende tutto tranne l'ultimo
+xs[::2] # Prende i pari
+len(xs) # mostra la grandezza della lista
+
+SPLIT
+
+csv = "rosso,verde,blu"
+colori = csv.split(",")
+# ("rosso","verde","blu")
+
+JOIN
+
+
+LISTA 
+append/insert → aggiungi un elemento
+pop → elimina e restituisce l'ultimo elemento
+sort → ordina
+sorted / + / slicing → producono una nuova lista
+
+x = [1,2,3]
+y = x
+print("x = ",x, "e y = ",y)
+
+x.append(4)
+print("x = ",x, "e y = ",y)
+
+OUTPUT
+x =  [1, 2, 3] e y =  [1, 2, 3]
+x =  [1, 2, 3, 4] e y =  [1, 2, 3, 4]
+
+SLICING
+xs[start:stop:step]
+start = dove iniziare
+stop = prima posizione esclusa
+step = passo, anche negativo
+
+IS
+Importa il riferimento
+
+== ?
+Hanno lo stesso valore. Non importa il riferimento
+
+ESEMPIO DI RIFERIMENTO
+c = [10,20]
+b = c
+
+b[0] = 20
+print(b,c)
+[20, 20] [20, 20]
+
+# E se voglio fare solo la copia? ////////////////////
+a = [[1],[2]]
+b = a.copy()
+
+b[0].append(9)
+
+print(a)
+print(a is b)
+print(a[0] is b [0])
+
+OUTPUT
+[[1, 9], [2]]
+False
+True
+
+Perché? b è una copia, ma i suoi elementi si riferiscono sempre agli elementi di a
+
+TUPLA
+tupla = (1,2)
+print(tupla)
+
+sono costanti e i loro valori non cambiano.
+
+INSIEMI / SET
+insieme = set() → insieme vuoto
+insieme.add("ciao)
+insieme.add("mondo")
+print(insieme)
+
+Perché non una lista? Non ha duplicati e non ha garanzia dell'ordine.
+Permettono di rappresentare collezioni di dati senza ripetizioni.
+
+valori = [3,1,3,2,1]
+unici = set(valori)
+print(unici)
+
+ciao ciao duplicati!
+
+PER GLI INSIEMI
+| = unione di insiemi
+& = intersezione di insiemi
+- = differenza di insiemi
+^ = differenza simmetrica
+
+funziona per dizionari ma senza la chiave valore
+
+INSIEME CONGELATO
+frozenset({1,2})
+versione immutata
+
+capoluoghi = {
+  "Emilia-Romagna":"Bologna"
+}
+
+DIZIONARI!!! Coppie di valori
+Non tutto è una chiave.
+
+
+
+
+COSTRUTTI BASE
+Da riga di codice al protocollo di iterazione
+
+stato = "freddo"
+if stato=="freddo":
+  stato = "caldo"
+  print(stato)
+
+INDENTAZIONE → In python permette di far capire all'interprete dove stanno i pezzi di codice
+
+Se non si vuole indentazione, si può fare ;
+
+stato = "freddo"; temperatura = 24
+
+if temperatura>25:
+  stato = "caldo";print(stato)
+
+ASSEGNAZIONE MULTIPLO = UNPACKING
+x,y = 10,20 # = stessa cosa come x = 10; y = 10
+x,y = y,x 
+Si sono scambiati!!!
+
+# Quindi...
+x = 10
+y = 20
+
+c = x
+x = y
+y = c
+print(x,y)
+
+# OPPURE
+
+x,y = y,x
+print(x,y)
+# SONO LA STESSA COSA!!!
+
+~ • ~ • ~
+
+IMPORTA IL MODULO
+import math
+raggio = 3
+area = math.pi * raggio**2 # per fare la potenza
+
+print(math.sqrt(81)) # 9.0
+
+eseguono anche il codice in un'altro file se viene importato (succede se hai una stampa heh)
+
+IF
+lo sai già
+
+lista = []
+if lista:
+  print("Controlla se la lista è vuota o no.")
+
+IF vs ELIF vs ELSE
+Sì.
+
+WHILE
+
+FOR
+
+beh hai capito
+
+24/09/2026
+WHILE
+while ripete finché la condizione resta vera
+
+WHILE ELSE
+entro l'else se non ho fatto il break
+
+n = 7
+d = 2
+while d<n:
+  if n%d == 0:
+    print("composto")
+    break
+  d += 1
+else:
+print("primo")
+
+FOR itera sui valori, non sugli indici
+nomi = ("Ada","Guido","Grace")
+for nome in nomi:
+  print(nome.upper())
+
+FOR ELSE
+numeri = [2,4,6]
+obiettivo = 7
+for n in numeri:
+  if n == obiettivo:
+    print("trovato")
+    break                 # non importa dove sia, se è sotto un ciclo lo rompe. Se non c'è pazienza.
+else:
+  print("assente")
+
+BREAK, CONTINUE, PASS
+Break - Esce dal ciclo più interno e salta il loop-else
+Continue - Salta il resto del corpo del ciclo e passa al giro successivo
+Pass - Non fa nulla: è un placeholder.
+
+for n in range(5):
+  if n==2:
+      continue
+  if n==4:
+    break
+  print(n)
+  # output: 0 1 3
+
+RANGE tramite liste
+list(range(5))
+# [0,1,2,3,4]
+
+list(range(2,5))
+# [2,3,4]
+
+# oppure 
+
+list(range(10,3,-2))
+# [10,8,6,4]
+
+Range è lazy perché non instanzia tutti gli elementi, solo il minimo indispensabile. Con la lista fa qualcosa.
+
+ITERARE SU LISTE
+Se vogliamo modificarla durante, basta fare una copia (lista.copy())
+
+STRINGHE
+for carattere in "caffe":
+  print(repr(carattere),len(carattere)) # Repr aggiunge delle ''
+
+TUPLE 
+punti = [(2,3),(4,1)]
+
+for x,y in punti:
+  print(x+y)
+
+# Spacchettamento / Unpacking 
+
+punti = [(2,3),(4,1)]
+
+for t in punti:
+  print(t)
+# (2,3)
+# (4,1)
+
+oppure si può anche fare t[0] e t[1] per x e y
+
+punti = [(2,3),(4,1)]
+
+for t in punti:
+  print(t[0]+t[1])
+
+SU PYTHON SI PUO' FARE COSI'!!!
+punti = [(2,3),(4,1)]
+
+for x, _ in punti:
+  print(x)
+# Il secondo elemento esiste ma non serve una variabile.
+
+ORDINI
+python non garantisce l'ordine. 
+
+sorted(tag)
+
+crea la versione ordinata dell'insieme tag
+
+DIZIONARI
+voti = {"Ada":30,"Linus":30}
+for nome,voto in voti.items():
+  print(nome,voto)
+
+for nome in voti:
+  print(voti(nome))
+
+ENUMERATE
+Su un dizionario, enumerate fa come contetatore
+
+for posizione,nome in enumerate(nomi,start=1):
+  print(posizione,nome)
+
+lettere = ["A","B","C"]
+for i,lettera in enumerate(lettere):
+  if i == 1:
+    continue
+  print(i,lettera)
+
+ITERABLE != ITERATOR
+
+Iterable → Qualsiasi oggetto che possiamo iterare sopra
+Iterator → Oggetto per contare 
+
+iterable - iter(...) (metodo che esiste) -→ Iterator - iter(...) →
+
+iter(list)
+# Ritorna un percorso fresco
+iter(iterator)
+# restituisce se stesso
+
+next
+restituisce l'iteratore corrente e passa al prossimo.
+Se non ne ha altri fa un errore di StopIteration
+
+LA FUNZIONE F STRING
+
+def esercizio_1():
+    name = "Ada"
+    score = 7
+    text = f"{name}: {score:02d}"
+    print(text)
+
+# MAIN
+esercizio_1()
+
+score:02d → 2 valori con 0 prima
+
+Es 1
+name = "Ada"
+score = 7
+text = f"{name}: {score:02d}"
+print(text)
+
+Es 2
+raw = input("Età: ")
+print(type(raw))
+
+age = int(raw)
+print(type(age))
+
+
+:= → Assegna e restituisci
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+28/09/2026
+
+JUPYTER
+SERVE!!!!!!!!!!
+
+def function(var: list[float]):
+  pass
+
+BOOLEANI
+v = True
+f = False
+
+hai già capito
+Un po' controintuitivo: qualsiasi cosa può essere un'espressioe booleane
+
+INTERI
+x = 3
+y = 5
+z = 3
+if x and (y or z):
+  print("Funziona")
+
+Perché funziona? Gli interi sono veri se non 0.
+
+STRINGHE
+x = ""
+if x:
+  print("Non è vuota")
+
+1. Stesso discorso va con insiemi vuoti, liste e set
+
+2. Se non esiste allora esiste il concetto di lunghezza
+se la len è definita, la chiamo. Se è 0, falso. Se no, vero!
+
+3. Se esiste l'oggetto.
+
+Se non ci sono definizioni di falsi, dovrebbero essere falsi.
+
+In python, si può fare anche così:
+x = set([1])
+y = [1,2,3]
+result = x or y
+print(result)
+
+IN REALTA' STAMPA SOLO LA PRIMA LISTA!!!!!!!!!!!!!!!!!!!!!!
+
+Perché? x è vero, quindi non deve vedere y
+Se x è vuota, allora prende y
+
+se tutte e due vuote, stampa vuoto
+
+SE AND, prende vuoto. 
+
+Comunque non fa la conversione.
+
+RICORSIONE ********************************
+
+Risolvere un problema attraverso casi più piccoli
+
+Esempio di ricorsione: file system
+Contiamo anche i file nelle sottocartelle!
+
+Scomponiamo il problema in un sottoproblema: un problema più piccolo è più facile da risolvere.
+
+Servono regole per terminare: 
+> Caso base: se non ci sono sottocartelle, conto solo i file presenti
+> Passo ricorsivo: Per ogni sotocartella chiedo quanti file contiene e li aggiungo
+-# Ogni chiamata deve raggiungere un caso in cui si ricade
+
+Una funzione può chiamare sé stessa!
+conta(corso) > conta(esempi) > conta(dati)
+Il codice è lo stesso; cambia la cartella ricevuta.
+
+3 DOMANDE da chiedere nelle ricorsioni: le ho mancate :( Guarda le slide!!!
+1.  
+2. 
+3. 
+
+UNA LISTA PUO' DIVENTARE PICCOLA
+
+def index_ricorsione(numbers:list[float],valore:float) -> int:
+    if not numbers:         # Lista vuota
+        return -1
+    if numbers[0]==valore:  # Se il primo elemento è uguale al valore
+        return 0
+    else:
+        index_in_rest = index_ricorsione(numbers[1:],valore)
+        if index_in_rest == -1:
+            return -1
+        else:
+            return 1 + index_in_rest            # Il valore viene ripassato
+                                                # Chiama se stessa finché finisce
+
+print(index_ricorsione([1,2,3,4,5,6,7,8,9,10],3))
+
+# index_ricorsione([1,2,3,4,5,6,7,8,9,10],3) -> 0
+# index_ricorsione([2,3,4,5,6,7,8,9,10],3) -> 1
+# index_ricorsione([3,4,5,6,7,8,9,10],3) - > 2
+
+def somma_da(valori,i):
+    if i==len(valori):
+        return 0
+    resto = somma_da(valori,i+1)
+    return valori[i] + resto
+
+print(somma_da([1,2,3,4,5,6],0))
+
+
+SE somma_da([4,2,5],0)
+i = 0
+4 + somma_da(valori,1)
+
+i = 1
+2 + somma_da(valori,2)
+
+i = 2
+5 + somma_da(valori,3)
+
+i = 3
+0 ← caso base

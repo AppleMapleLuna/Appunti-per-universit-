@@ -1,0 +1,733 @@
+19/10/2026
+@property 
+è un modo di andare ad aggirare il problema dell'Incapsulamento. È un decoratore speciale 
+che tratta le funzioni di una classe in variabili. È un contratto evolutivo 
+
+EREDITARIETA' 
+Inserisci la definizione qua 
+Una sottoclasse eredita l'API della base 
+
+class Veicolo:
+    [...]
+
+class Fuoristrada(Veicolo):
+    [...]
+
+Tutti gli oggetti che sono Fuoristrada sono anche veicoli 
+ma i veicoli non sono Fuoristrada
+
+f1 = Veicolo()
+f2 = Fuoristrada()
+tutte e due possono riutilizzare i metodi di Veicolo()
+
+LE BASI SI DICHIARANO TRA PARENTESi
+
+f1.muovi( )
+quale chiama f1 or f2? 
+print(p1.posizione)
+
+self.posizione → self.__dict__("posizione")}
+
+PYTHON SUPPORTA PIU' CLASSI BREVE 
+EREDITARIETA' MULTIPLA 
+
+class Navigabile:
+    def navigaa(self)
+        return "acqua"
+def Guidabile()
+    def guidaa(self)
+        return "terra" 
+classe Anfibio Navigambile
+
+L'ordine che andiamo ad impostare sulle classe che vogliamo estendere h asempre navigabili 
+
+super() → Dà sempre il punto superiore di un privato
+a1 = Anfibio
+
+get attribute → Prima di ogni altra cosa chiede. 
+
+Navigabile ha un metodo classe chiamato clacosn
+
+È facile se c'è solo un cadidato
+
+a1 = Anfibio()
+print(a1.naviga) # acqua 
+print(a1.guida) # output: terra 
+print(a1.clacson) # se non definito, la getattribute ha sollevato un errore.
+
+Clacson è definita in anfibio? no, allora vai sopra.
+
+PYTHON SUPPORTA PIU' CLASSI BASE    
+è UNA COSA COMUNQUE
+
+chiama il primo
+
+MRO 
+Definiamo l'ordine in cui le classi sono imparentate
+L'unica garanzia è l'oggetto superiore è la prima 
+1. Anfibio 
+2. Navigabile (indipendenti) 
+3. Guidabile (indipendenti)
+4. object 
+
+MRO si interroga sulla classe 
+
+anfibio.__mro__
+# (anfibio, guidabile, navigabile, ojbect)
+
+anfibio.mro()
+# funzioa pure 
+a = Anfibio()
+type(a).mro()
+
+MRO NON SI PUO' MODIFICARE, 
+CAMBIARE __BASES__ E' METAPROGRAMMAZIONE FRAGILE 
+
+Classe.__bases__ = (NUovaBase,)
+
+Cosa fa? Data Anfibio, chi sono i superiori in modo estensivo.
+Anfibio.__bases__ = (Navigabile, Guidabile)
+Ora nella MRO 
+# (anfibio, navigabile, guidabile ojbect)
+
+L'INIZIALIZZAZIONE MULTIPLA DEVE COOPERARE 
+Ogni classe consuma i propri argomenti, chiama super() una volta 
+
+class Posizionato:
+    def __init__(self,**kwargs):
+        self.posizione = kwargs.pop("posizione",0)
+        super().__init__(**kwargs)
+
+a1= Anfibio()
+print(a1.posizione)
+
+L'oggetto Anfibio ha il campo di posizione? Sì, anfibio non è definita posizione, ma 
+sulle classe padri sì.
+
+print(a1.velocita)
+
+Questa dice che gli Anfibi hanno velocita. Non hanno la velocità.
+Si è rotto 
+
+Se fa il costruttore di guidabile, velocità è definito. 
+Perché? Guidabile non ha neanche la 
+
+si pul fare solo super().__init__
+però fare a1.velocità da errore perché guidabile non è stata chiamata super.
+
+Cosa fa super? Vuole l'MRO della class
+Si può anche fare Anfibio(navigibgaig)
+
+Super() → Viene chiamato per allargare.
+
+ISISTANCE E ISSUBCLASS SEGUONO L'EREDITARIETA'  
+
+a = Anfibio()
+isistance(a,anfibio)
+isistance(a,Posizionato)
+issubclass(Anfibio,Tracciato)
+
+Possiamo chiedere oggetti 
+
+print(isistance(a1,Navigabile)) # True 
+print(isistance(a1,Guidabile )) # True
+
+istanza è compatibile con tutti le classi presenti nella sua MRO 
+subclass controlla se queste sono sottoclassi 
+
+UNO STESSO NOME PUO' AVERE PIU' SORGENTI
+
+Descriptor → Regola definita sulla classe 
+classe /MRO → Attributo o metodo ereditato 
+istanza → valore in obj.__dict__
+e un altro 
+
+GLI ATTRIBUTI DI CLASSE SEGUONO MRO 
+classe concreta → Basi nell'ordine dell'MRO → oggetto (object)
+
+L'ORDINE IN __INIT__ CAMBIA LO STATO FINALE 
+class Animale:
+    x = 0
+    y = 0
+    def __init__(self):
+        self.a = 1
+        self.b = 1 
+
+class Cane(Animale):
+    x = 10
+    def __init__(self):
+        self.a = 2 
+        super().__init__()
+
+l'oggetto cane ha il campo a? sì 
+Ma che valore ha a? 1
+→ Set 2 → Chiamo init → Init fa self.a = 1
+Sempre meglio fare super prima invece di dopo 
+
+Cane ha b? perché è stato inizializzato come 1
+E dei campi della classe?
+c.x esiste x? No, ma c'è un campo della classe. Che valore ha x? 10.
+c.y? Va dalla classe genitore allora! 
+
+GETATTR NON PROTEGGE UN CAMPO ESISTENTE 
+class Conto:
+    def __init__ (self):
+        self.saldo = 0
+
+    def __getattr__ (self,nome):
+        if nome == "saldo":
+            raise AttributeError("nascosto")
+c = Conto()
+print(c.saldo)
+
+Risultato è 0
+__getattr__ è l'ultima cosa che ci chiediamo. saldo è parte del dict? in questo caso sì.
+Per mascherarla è meglio utilizzare __getattribute__ 
+
+UN CAMPO REALA BYPASSA __getattr__
+c.__dict__
+# {}
+c.saldo 
+# chiama __getattr__
+
+__getattribute__ è l'entry point 
+ogni accesso a obj.nome vengono risolti tramite la __getattribute__
+
+UN OVERRIDE SICURO DELEGA A OBJECT 
+
+SCEGLI IL PUNTO DI ESTENSIONE PIU' STRETTO
+__getattribute__ → Intercetta ogni nome 
+property → controlla un solo nome, validazione e API calcolata 
+
+UN DECORATORE PUO' RESTITUIRE OGGETTI DIVERSI
+Che cos'è la property? 
+Cosa vuol dire fare la @property? Vuol dire che sto decorando la funzione con una funzione di 
+ordine superiore che prende in input la funzione sotto di essa.
+La funzione di property che cos'è?
+
+Com'è possibile che può dimenticare delle parentesi la property?
+Il decoratore property è un decoratore speciale che prende l'input e restituisce un oggetto di 
+tipo descrittore che è un oggetto particolare di python che dà la possibilità di modificare e 
+leggere i campi in quel modo.
+
+__get__ __set__ __delete__
+L'unica cosa che deve garantire questi metodi. NON tutti sono necessari.
+
+Sono tutti quelli che servono per fare il campo di un oggetto.
+
+tre hook, tre operazioni 
+desc.__get__(obj,Tipo)  desc.__set__(obj,v) desc.__delete__(obj)
+
+get → gestisce accesso da classe. Legge il campo d'istanza per noi 
+getter → metodo di istanza e due argomenti, 
+
+Il descriptor è memorizzato nella classe 
+owner → Config 
+namepsace → Config.__dict__
+Valore → Costante("1.0")
+
+data.mese → non ritorna l'oggetto descrittore ma quello che l'oggetto descrittore ritorna 
+ovvero return self.mese 
+
+
+SELF E' L'OGGETTO DESCRIPTOR CONDIVISO
+classe → Prova.i = Desc()
+__get__self → Quell'unico Desc 
+Istanze → p1,p2,p3
+
+26/10/2026
+In python ci offre almeno 3 funzionalità: GET SET DELETE 
+
+POssiamo creare un oggetto descrittore che ci permette di modificare 
+le istanze dei nostri oggetti in un modo più esterna
+
+desc.__get__(obj,Tipo)
+desc.__set__(obj,Tipo)
+desc.__delete__(obj,Tipo)
+
+Get deve gestire l'accesso da classe.
+
+class Costante:
+    def __init__ (self,valore):
+        self.valore = valore 
+    def __get__(self,istance,owner):
+        if istance is None:
+            return self 
+        return self.valore 
+
+L'istance è strana perché non la utilizziamo. È un comportamento inusuale perché i descrittori
+utilizzano gli oggetti che chiamano 
+
+Il descriptor è memorizzato nella classe 
+
+p.i attiva __get__ 
+class Desc:
+    def __get__(sel f,istance,owner):
+        return 42 
+
+class Prova:
+    i = Desc()
+
+p = prova()
+print(p.i) #42
+
+Invece di mettere l'indirizzo dell'oggetto nella classe, dietro le quinte porta a chiamare il get
+invece. Come fa? L'idea base è che quando la pipeline per risolvere gli attributi di python, 
+questa è una pipeline quasi completa perché mancano le istruzioni
+
+Se c'è un descrittore definito nella classe, allora quella ha priorità.
+
+DISCORSO FONDAMENTALE PERCHE' L'ISTANCE CI ROMPE LE SCATOLE.
+
+Se definiamo all'interno le cose su un unico oggetto costruttore senza istance, potrebbe succedere
+che ci sia un descrittore e quindi questa sia unica a tutti gli oggetti della classe.
+
+class Campo:
+    def __set__(self,istance,value):
+        self.value = value 
+    def __get__(self,istance,owner):
+        return self.value 
+
+class P:
+    i = Campo()
+
+p1,p2 = P(),P()     # Assegnamento che porta a chiamare la set. 
+p1.i = 10
+print(p2.i)         # Otteniamo 10 perché pensiamo di utilizzare il campo di un oggetto, ma il
+                    # Descrittore è uno e un solo.
+                    # Qualsiasi modifica sarà condivisa
+
+Nessuno usa istance perché istance è l'oggetto che utilizziamo 
+
+istance.__dict__()
+
+# Fare tante cose a mano utilizzando i setter 
+# Property è campo
+
+__SET_NAME__ CREA UNO STORAGE UNIVOCO
+
+UN DATA DESCRIPTOR VINCE SEMPRE SULL'ISTANZA 
+
+Esiste un descrittore registrato? Sì? Allora chiamo la get per ritornare il descrptor 
+
+
+LA PRECEDENZA ESATTA CHIUDE IL LOOKUP 
+1. Data descriptor 
+2. istance.__dict__
+3. non_data descriptor / classe via MRO 
+4. __getattr__ se manca 
+
+__getattr__ è un fallback che chiama giusto in caso è definita. 
+
+OGNI CLASSE E' UN'ISTANZA DI UNA METACLASSE 
+oggetto = istanza di classe 
+classe = cos'è? istanza di METACLASSE 
+
+Perché serve? Ci sono casi che sono utili.
+
+La metaclasse per autonomasia esiste. TYPE 
+
+TYPE è la metaclasse più generica delle metaclassi
+
+c = C() → oggetto istanza di classe C 
+type(c) is C → classe C istanza di metaclasse 
+
+TYPE HA DUE FORME UTILI 
+ISPEZIONE
+type(obj)
+# classe di obj 
+
+COSTRUZIONE 
+C = type(
+    'C',
+    (Base, ),
+    {'x':1}
+)
+# Stessa cosa a fare questo 
+class C(Base):
+    x = 1
+
+Ogni classe è sottoclasse di obj. (ricorda!)
+
+In python, noi possiamo sia creare oggetti da classe ma anche creare classi 
+da essere una metaclasse 
+
+class Meta(type):
+    def __new__(mcls,name,bases,namespace):     # Customizza la creazione degli oggetti della classe 
+        namespace["categoria"] = "gestita"
+        return super().__new__(
+            mcls, name, bases, namespace 
+        )
+# New viene chiamata a ricorsione per ogni attributo di classe 
+
+class Servizio(metaclass=Meta):
+    pass                       
+
+print(Servizio.categoria)      # "gestita"
+
+Qua permettiamo di dire che crea tutte le classi che vuoi, ma ti passo la metàclasse. Tutte le 
+classi avranno questo, anche se non sono parentate.
+
+Ci importa solo e esclusivamente in scenari dove vogliamo andare a creare dei vincoli 
+su tutte le classi che andrò a creare. Non importa cosa servono, devono avere dei vincoli.
+
+METACLASSE SOLO PER LE POLITICHE DELLA CLASSE 
+I casi in cui può servire sono limitati ma è interessante avere quella possibilità.
+
+__call__ RENDE CHIAMABILE UN'ISTANZA 
+
+class Contatore:
+    def __init__(self):
+        self.n = 0
+
+    def __call__(self):
+        self.n += 1
+        return self.n 
+
+c = Contatore()
+c() # 1
+c() # 2
+
+è un metodo di istanza 
+Come una funzione, chiama sopra applicando proprio una funzione sopra.
+
+Apre la strada verso direzioni interessanti.
+Se possiamo creare classi con oggetti chiamabili, vuol dire che possiamo usare classi per 
+decorare le mie funzioni.
+
+UN DECORATORE DI CLASSE DEVE INOLTRARE LA FIRMA 
+Quando ho un oggetto di tipo Traccia, posso chiamare sopra 
+
+from functools import update_wrapper
+class Traccia:
+    def __init__(self,func):
+        self.func = func 
+        update_wrapper(self,func)
+    
+    def __call__(self,*args,**kwargs):
+        print("call", self.__name__)
+        return self.func(*args,**kwargs)
+
+@Traccia 
+def somma(a,b=0):
+    return a+b 
+
+somma(1,2)
+
+Di base non vediamo nulla, ma in realtà c'è call somma. 
+Lo abbiamo decorato con una funzionalità di call
+
+è un oggetto d'istanza di traccia che quivale a fare 
+Traccia(somma)(1,2)
+
+Dammi un oggetto finché sia chiamabile come funzione per restituirla in funzione per fare ()
+
+Se togliamo il metodo call, ci dà un eccezione per type error: Traccia object non è callable
+
+permette di fare di tutto e di più con il linguaggio di python 
+
+UNA ABC ESPRIME UN CONTRATTO DI FAMIGLIA 
+Interfaccia → Operazioni richieste
+Vincolo → Niente istanze finché manca un metodo 
+Riuso → Implementazioni comuni 
+
+Peculiarità sottosviluppata 
+
+Possiamo definire classi per cui non vogliamo definire il comportamento 
+OVVERO CLASSI ASTRATTE, non sono concrete e non sono state definite dal programmatore in maniera
+completa appositamente.
+
+from abc import ABC, abstractmethod
+class Forma(ABC):
+    @abstractmethod
+    def area(self):
+        pass 
+
+Forma() # TypeError: metodo astratto area 
+# Classe non completamente definita 
+
+Classe → può essere definita
+Istanza → Bloccata se astratta 
+
+Obblighiamo i discendenti a decorare le classi 
+
+Per risolvere facciamo tante classi che sono sottoclassi di Forma
+
+class Rettangolo(Forma):
+    def __init__(self,base,altezza):
+        self.base = base 
+        self.altezza = altezza 
+    def area(self):
+        return self.base * self.altezza 
+
+f = Rettangolo(5,3)
+
+Sono comunemente chiamate interfacce, imponiamo a chiunque vuole estendere i metodi che vogliamo
+istanziare.
+
+si potrebbe fare a un metodo astratto un return, rettangolo si potrebbe anche non definire?
+Non importa che non lo abbiamo definito, non lo abbiamo decorato. Deve essere sovrascritto.
+
+Se vogliono chiamare con super la definizione di default si potrebbe fare...
+
+Una classe è astratta finché almeno un metodo è astratto.
+
+ASTRATTO → Richiede override 
+IMPLEMENTATO → Offre una base riusabile
+
+Solo perché è astratto non vuol dire che non devi definirlo. CHIDE SOLO DI ESSERE RIDEFINITO!!!
+
+UNA CLASSE CONCRETA PUO' COMBINARE PIU' BASI
+class Identificato:
+    def id(self):
+        return 1 
+
+class Documento(Esportabile, Identificato):
+    def esporta(self):
+        return("id":self.id())
+
+d = Documento()
+
+Documento è istanziabile? Sì! 
+Anche se ha genitore una classe astratta ha definito il metodo esporta. Se esporta era in 
+Identificato invece, andava bene? Sì 
+
+Estende tutto quello che c'è in Identificato e quindi non dà problemi.
+
+29/10/2026
+PACKAGE INVECE DI FILE INTORNO
+C:\Users\Administrator\Documents\CODING\python\2026-2027\file_format_exercise
+
+my_math.py 
+main.py → Script principale
+PACKAGE1 → Rappresenta la collezione di moduli
+
+Seguiamo strutture così
+Questa separazione ci aiuta a raggruppare moduli che parlano delle stesse cose 
+
+così possiamo fare nel main 
+import my_math_package1.my_math as my_math
+
+Ora dentro al package, quando si compila, c'è una versione compilata di python per questione di
+performance. Crea un file corrispondente di bytecode che viene eseguito. 
+Se già esiste non serve ricrearlo.
+
+Se su my_math facciamo un'altra funzione chiamata my_power, è stata cambiata e quindi deve 
+ricompilarla.
+
+# Cosa vuol dire fare import? Il modulo è stato eseguito
+# Se lo importi senza il my_math, ovvero un alias, devi scrivere un nome molto lungo.
+# Inserire un nome più rigoroso per l'università all'orale invece di "molto lungo"
+
+import my_math_package1.my_math as my_math
+
+# Cosa vuol dire fare import? Il modulo è stato eseguito
+# Se lo importi senza il my_math, ovvero un alias, devi scrivere un nome molto lungo.
+# Inserire un nome più rigoroso per l'università all'orale invece di "molto lungo"
+
+print(my_math.my_sum(2,3))
+# print(my_math_package1.my_math.my_sum(2,3)) # è la versione più lunga
+
+# E se ci sono due import così?
+'''
+import my_math_package1.my_math as my_math
+import my_math_package1.my_math as my_math
+
+La stampa viene fatta una volta perché l'import è abbastanza furbo che crea delle connessioni
+in global. va a prendere i moduli già importati!
+Se sono già importati, non li importa di nuovo.
+
+Package = collezione di moduli.
+
+'''
+
+Python è pigro che non fa niente 
+
+se voglio tutto il math package a disposizione?
+All'interno della cartella di package creiamo un file chiamato __init__.py 
+
+Ora l'import del package, quando python viene importata, viene eseguita con __init__.py in questo
+modo:
+import my_math_package1
+
+Non riesce a trovare my_math però si può fare.
+
+Si può fare:
+import .my_math
+MA NON E' CONSIGLIATO!!!!!!!!! Fare la root del progetto dove c'è il main. Da lì in poi 
+tutto sarà srotolato senza errori di path. 
+
+Puoi mettere degli import dentro all'__init__
+
+Invece di fare un import dal package, si può anche fare l'import di un elemento in specifico
+from my_math_package1 import my_math, my_math_str
+è uguale a fare 
+import my_math_package1.my_math
+
+Ci sono dei casi in cui ci sono degli omonimi, ovvero che ci siano funzioni con lo stesso nome.
+
+importare un script python e un package sono SUPER diversi .
+
+Con il main e l'asterisco 
+from my_math_package1 import *
+
+Prende tutte le cose che ci sono in __init__ e li mette in global 
+è potente ma ha un sacco di problemi: il gran mischione.
+
+Prima avevo almeno un incapsulamento 
+
+Import asterisco → Importa tutto quello che c'è in __init__. Possiamo essere più precisi a dire 
+a python di importare tutto. 
+__all__ = ["my_math","my_math_str"]
+__all__ = ["my_math"]   → Con l'asterisco, ti importo solo quello che c'è in quesa lista.
+
+Vale anche per i moduli, stranamente
+
+Possiamo limitare e costumizzare anche i moduli facendo 
+__all__ = [...]
+
+Nessuno vieta di fare 
+from my_math_package1.my_math import *
+
+Non è una notazione di package, ora importa tutte le funzioni 
+
+ANCHE LE FUNZIONI POSSONO ESSERE PRIVATE IN UN QUALCHE MODO.
+Etichette 
+
+Diventa interessante se si fa 
+
+my_power_result = _my_power(2,3)
+
+All non solo permette di filtrare, ma aggiunge visibilità
+
+su __init__ si può anche fare 
+from my_math_package1.my_math import * 
+
+Importa con l'asterisco il contenuto di entrambi
+
+Da esterno crea un modulo disponibile in package 
+Visibilità entra a gioco 
+
+Init fa un import tramite asterisco tramite RAM 
+
+Gioco di visibilità e incapsulamento
+
+Package è una cartella che contiene altre cartelle o moduli 
+il modulo è lo script python 
+
+WFHAOFAIPOWFAPOFJWAIRGUHNC
+
+Ci sono script che non hanno un solo goal. Possiamo avere degli script che possiamo eseguire,
+ma dall'altro distribuirli come delle librerie
+
+Come li mischiamo? Come possiamo dire a my_math di comportarsi come libreria o se viene eseguita 
+con uno script come il main?
+
+In python è molto facile perché in un qualsiasi modulo python, possiamo domandarci:
+if __name__ == "__main__":
+    print("Inserire queste robe")
+
+Si chiede che il nome assegnato allo script si chiama main. Python caratterizza il modo in cui 
+lo script è stato importato. Se è stato importato normalmente, allora il nome main sarà il suo 
+modulo. Altrimenti, se non è stato importato, di default il suo nome è uguale a name.
+
+Se rieseguo il modulo (facendo anche la print del __name__), il suo nome è 
+my_math_package1.my_math come inteso. 
+
+Se gli diciamo al main di stampare il suo nome , il suo nome di default è proprio __name__
+
+Eseguendo il modulo my_math_package1.my_math con la print del nome mostra proprio __name__
+
+Quelle sono stampe di test per essere utilizzata in due domini diversi.
+
+Questa distinzione è importante quando si vuole eseguire il codice quando volevo utilizzare
+le sue funzionalità.
+
+I test sono stati eseguiti anche quando io ho fatto l'import 
+
+non ci siamo mai chiesti l'ordine delle definizioni.
+fare
+
+funzione()
+
+def funzione():
+    pass 
+
+Errore: funzione non è stata definita affatto.
+
+Come si evita? Definisce tutto quello che deve, poi alla fine fa 
+if __name__ == "__main__":
+    funzione()
+
+l'ordine non avrà più importanza perché diamo per scontato che la prima esecuzione partirà 
+sempre alla fine del file 
+
+Prossimo step: TENERE LE COSE PULITE NELLA CARTELLA 
+Potrebbe succedere che uso moduli e librerie disponibili in python. Il problema non creiamo solo 
+un progetto python, ne creiamo un botto. Se utilizziamo solo python, può darsi che ci siano 
+package che vogliono moduli o package incompatibili. Ma se c'è un solo python, è un punto di 
+fallimento.
+
+Come si dorebbe fare a priore di quello che andiamo ad utilizzare?
+AMBIENTE VIRTUALE
+
+Serve poter andare a definire all'interno del progetto PYTHON. tutto ciò che modifichiamo,
+installiamo ed ecc. sarà esclusivamente a livello locale di python. Così non interferiscono
+tra di loro.
+
+Come si fa? 
+VERSIONE MECCANICA
+→ Cartella giusta 
+→ python3 -m venv .venv 
+# -m vuol dire modulo, .venv è una cartella sopra in cui tutto ciò che fa python sarà incapsulato
+# sul progetto.
+# Dobbiamo ora usarlo 
+→ source .venv/bin/activate (PER WINDOWS .venv/Scripts/activate)
+# questa per mac, su windows forse un punto
+# Ora il terminale mostra che non sei nel contesto globale, sei in una macchina virtuale speciale 
+# solo per questo progetto 
+→ pip3 list 
+# package manager, mostra tutti i pacchetti 
+
+Pip è il packet manager di autonomasia
+ha un intero sito in cui li puoi installarli.
+
+matplotlib è una cosa molto bella
+
+vs code ha già notato il venv e te lo manda. Farla a mano non funziona.
+
+Tramite l'ambiente virtuale possiamo costumizzare i pacchetti senza disturbarli in altri.
+Su mac, se installiamo un pacchetto con pip non lo vuole farlo e lo vuole in virtuale.
+
+Non dobbiamo mai usare pip sul nostro ambiente globale 
+
+ALTRA COSA CHE DOBBIAMO VEDERE 
+Aspetto interessante che ci frega 
+
+Tutto è facile quando voglio lanciare il main. Il problema è quando io vado ad eseguire dei 
+sottomoduli
+
+Perché non potrebbe funzionare? Dove sono io non è dove c'è il file. 
+print(sys.path)
+
+sys = modulo built-in di sistema 
+path = percorso per eseguire lo script
+L'ordine ha importanza perché dice dove deve andare a cercare. Il primo elemento è proprio 
+il path!
+
+Mostra anche tutte le installazioni di python che vengono utilizzate in python.
+
+Il terminale non ha ancora spostato cartella. Il sys path considera il path dello script che sto 
+eseguendo. In questo caso funziona.
+
+Errore: riga 1, il file è stato compilato, era pronta ad essere eseguita ma fallisce perché 
+import my_math_package1.my_math as my_math
+
+tutto inizia dal sys.path, ma se viene cambiata il percorso o se viene un po' 
+stornata è un problema.
+
+Peculiarità di python: python3 -m
+python, esegui questo modulo. Python vede questo e allora il sys.path è stata lanciata nella 
+cartella principale 
+
+tutto è relativo alla cartella root 

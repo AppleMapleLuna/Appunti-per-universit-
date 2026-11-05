@@ -1,0 +1,114 @@
+05/11/2026 
+SCRIVIAMO IL CODICE PER GLI ALTRI 
+
+Scriviamo il nostro pacchetto con la cartella sorgente, il pacchetto con il file __init__.py e i file python 
+Ora abbiamo 2 file in più: pyproject.toml e README.md 
+
+Pyproject.toml 
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = ["] boh
+# è la versione. sempre meglio fare 61.0.0
+
+[project]
+name = "Fraction-Unimore-Demo"
+version = "0.1.0"
+description = "Libreria didattica per il calcolo con le frazioni"
+readme = "README.md"
+requires-python = ">=3.8"
+ed ecc.
+Il nome del pacchetto è importante 
+
+[project.urls]
+Homepage = "https://github.com/nome/cartella"
+Specifica dov'è il pacchetto sulla rete 
+
+
+SULLA README.md 
+Sai già cosa serve 
+Dice come installare il pacchetto.
+
+PER COMPILARE, si fa python -m build 
+
+__init__.py 
+è la cosa più semplice da fare, ma al momento può fare __all__ = "Fraction" 
+
+Perché VIRTUAL ENVIRONMENT? Separiamo le librerie globali da quelle specifiche del progetto
+Farla in un VIRTUAL ENVIRONMENT!!!
+
+Facendo python -m build 
+Fa un sacco di roba, ma ha compilato python 
+
+2 FILE ORA 
+- .tar.gz → Archivio zip che contiene il codice e tutti i metadati
+- .whl → è pronto per uso. Facendo pip install libreria, la prima cosa che vede è il file .whl, ma se non c'è usa l'archivio e lo compila di nuovo così che funziona in qualsiasi dispositivo
+
+ORA MANCA L'UPLOAD 
+però c'è un preriquisito: un'altra libreria che si chiama twine
+
+fa questa:
+twine upload --repository-url https:/test.pypi.org/legacy/ /dis* --verbose
+
+Cosa succede? API token
+è una specie di password complicata. Dove la prendiamo? 
+Per questo abbiamo testpypi
+
+ORA GENERIAMO L'API TOKEN 
+Andare su account → Settings → API tokens → ADD API tokens → Scegli nome e scope 
+crea token 
+Per ragioni di sicurezza, il token è visibile una sola volta.
+
+ERRORE: filename has been previously used error 
+Errore tipico: basta cambiare nome 
+Perché così tanti errori? SERVE RICOMPILARE
+> python -m build 
+
+Ora il file è lì. Se funziona al colpo, chiedi come mai. Se non funziona, chiedi come 
+
+FUNZIONERA' O NO? sì.
+
+
+# TUTTE LE ISTRUZIONI PER IL COSO 
+.venv/Scripts/activate 
+python -pip install --upgrade pip 
+pip install build twine 
+
+python -m build 
+ls -lh dist/  (se linux )
+py -m twine upload --repository testpypi dist/*
+pip install --index-url https://test.pypi.org/simple --no-deps Package-name
+
+
+ORA SERVE ANCHE UN ACCOUNT GITHUB 
+Esistono alternative? Sì, Bitbucket, Azure DevOps, GitLab
+Github è il più conosciuto. È un archivio e piattaforma di hosting per il codice.
+
+Qualità di github: non è presente solo l'ultima versione. C'è tutta la storia del progetto.
+È anche collaborativo e si può fare e proporre modifiche.
+
+GITHUB 
+- Quando un progetto è "finito" lui inizia il suo lavoro
+- Actions → Lanciato comandi sul nostro PC 
+    - Abbiamo inserito un Token a mano, ora dov'è?
+    - Ho fatto tutti gli step corretti?
+- Stacanovista
+    - Il token non serve ricordare e non possiamo sbagliare nel processo del rilascio del pacchetto 
+    - Creiamo il nostro operaio sulle github Actions
+
+| .github
+|  |- workflows.yml
+|  |- 
+
+workflows.yml 
+name: Publish to TestPyPI 
+on: 
+    push:
+        tags:
+            - 'v*'
+
+on push tags dice che l'operaio staccanovista (quando fa un push su github) devi iniziare il tuo lavoro 
+C'è un botto qua, però invece di usare twine ogni push aggiorna il coso 
+
+FARE COMMIT 
+git add 
+git 
