@@ -1,0 +1,179 @@
+09/11/2026
+MEMORIA IN PYTHON 
+
+La memoria si comprende a strati
+
+Un nome riferisce un oggetto.
+Quanti riferimenti fa l'oggetto? 
+
+a = []
+b = a 
+
+Frame e oggetti hanno ruoli diversi 
+Se creiamo un oggetto all'interno di un corpo o di una funzione, ha significato solo a quell'interno.
+Anche se il frame muore, l'oggetto no, si può riutilizzare 
+
+L'oggetto è raggiungibile?
+Un oggetto è raggiungibile quando esiste una catena di riferimenti forti dalle radici del programma.
+Se ogni percorso scompare, l'oggetto può diventare candidato al recupero.
+
+Nel disegno A, B e C sono raggiungibili. D ed E riferiscono fra loro, ma nessun percorso parte dalle radici e raggiunge.
+
+TRE FAMIGLIE DI GESTIONE
+La gestione manuale affida al programma il rilascio esplicito. Il reference counting aggiorna un conteggio locale. Un tracing collector 
+ricostruisce quali oggetti sono raggiungibili dalle radici.
+
+Le strategie possono convivere: CPython combina reference counting e raccolta dei cicli. Gli algoritmi generali di tracing spiegati dopo 
+non descrivono tutti il collector di CPython 
+Sta al programmatore gestire la memoria 
+
+Manual → malloc/free espliciti
+reference count → Conta riferimenti
+Tracing → Segue la raggiungibilità
+
+NEL MANUALE 
+Nel modello manuale, ogni allocazione deve avere un responsabile del rilascio. Dopo free il blocco non appartiene più al programma, anche 
+se una variabile contiene ancora il vecchio indirizzo.
+
+In C un puntatore non diventa automaticamente nullo dopo free.
+
+Giocare con i puntatori con linguaggi che gestiscono la memoria manualmente è DIFFICILE. Tende ad essere facile sbagliare e introduce 
+errori non voluti, tra questi la MEMORY LEAK 
+
+Un leak trattiene blocchi che il programma non usa più. Un riferimento dangling permette di accedere a spazio già rilasciato. Un double 
+free tende di rilasciare due volte lo stesso blocco.
+C'è anche la frammentazione
+
+Python lo fa automaticamente 
+
+REFERENCE COUNTING SEGUE I RIFERIMENTI FORTI 
+Nel modello semplificto contiamo i riferimenti forti entranti. Aggiungere un alias incrementa il conteggio, eliminare un riferimento 
+lo decrementa. Quando il conteggio arriva a 0, può iniziare la distruzione.
+
+a = []
+b = a 
+2 riferimenti forti. Quando la reference count raggiunge 0 non ci sono più reference attivi per quell'oggetto 
+
+se si ha 
+a = []
+b = a 
+
+e si elimina a, b ha ancora l'oggetto che si riferisce ad a. python se no potrebbe dare esempi stupidi.
+
+REFERENCE COUNTING 
+è buona per un po' di roba MA NON PER I CICLI 
+Prima di del, ciascuna lista del ciclo riceve un riferimento dal programma  
+Comunque fa scifo con i cliìì
+
+Se il reference countin = 0, non ci intetressa 
+
+
+Serve qualcosa per riconoscerla 
+
+Qualsiasi oggetto era sempre un refernence forte che teneva.
+
+Se pero il reference forte, di base l'oggetto è ancpra vivo, però come prograkkati
+
+è veloce, ma non funziona sempre 
+
+Tracing collector
+Il tracing parte dalle radici. GUARDA IS SLIDE
+
+e i cici?
+Se ti riesco a raggiungere pass, se no morto.
+APPROCCIO MARK AND SWEEP
+Prima passiamo in rassegna la memoria, marcando quelle che si possono raggiungere
+
+MARK AND SWEEP E' UN ALGORITMO FACILE DA FARE: prima marcare, poi SWEEP.
+
+Problema grosso: computazionale. 
+Assunzione: I problema 
+
+TRI-COLOR MANTIENE UN'INVARIANTE 
+Vengo ma
+Bianc → Non ancra scoperto 
+ci sono altri 
+
+Inizializzazione → Tutti gli altri sono inizialmente grigi.
+
+MARK AND SWEEP → Guarda la radice e guarda tutto 
+Questa? Gli oggetti grigi sono da vedere ma l'altra roba ha qualcos'altro
+Bisogna sempre fare attenzione su oggetti neri
+
+Basata sulla reachability, quindi la capacità di aggiungere un oggetto in memoria e identificare l'usabilità dell'oggettol
+
+Si può avere una memory leak in python? Se non è raggiungibile l'oggetto viene deallocato. Domanda a trabbocchetto, sì.
+Ci sono casi in cui si scrive il codice, c'è un oggetto con riferimento global, lo usi una volta e poi non più. Quello è un memory leak 
+causato dagli sviluppatori.
+
+Incremental Tracing → Write variable, il vantaggio del TRICOLOR è la interleaving, ovvero l'interlacciamento tra programma, garbage 
+collector e altro. Ogni volta che c'è un arco non etichettato viene etichettato da una variabile. Non è male per performance.
+
+COLLECTOR MOVING E NON-MOVING 
+Un moving collector trasferisce gli oggetti vivi e aggiorna i riferimenti. Può riunire lo spazio libero.
+ Un non-moving collector conserva gli indirizzi e riutilizza buchi e blocchi liberi 
+
+[a,b,_,_,c,_] FRAMMENTATA 
+[a,b,c,_,_,_]
+Point deframmentare la memoria 
+semanticamente equivalenti, frammenti diversi.
+
+Python, è il primo, non fa la deframmentazione.
+Dà la garanzia che qualsiasi oggetti sarà sempre allocato lì.
+
+IPOTESI GENERAZIONALE: MOLTI OGGETTI MUOIONO GIOVANI
+Molti programmi creano numerosi oggetti temporanei e mantengono a luno una parte più piccola dei dati.
+
+Python crea insiemi di oggetti a giovani e quelli che soppravvivono si tolgono. Per la garbage collector, frammenta la ricerca sugli
+insiemi che interessano.
+
+I sopravvissuti vengono promossi su altri livelli.
+
+GARBAGE COLLECTOR IBRIDI
+Combini di più assieme
+
+Un sistema ibrido usa strategie complementari. Il reference counting risolve molti casi locali, mentre un collector aggiuntivo cerca gruppi
+ciclici che mantengono riferimenti interni.
+
+Usa il GENERAZIONALE.
+
+PYTHON SPECIFICA IL COMPORTAMENTE, NON UN UNICO GC
+Python definisce oggetti e riferimenti, ma lascia spazio a implementazioni.
+
+IL MODULO GC CONTROLLA IL COLLECTOR CICLICO
+gc.collect() senza argomenti richiede una raccolta completa del collector ciclico. Restituisce il numero di oggetti raccolti più quelli 
+non racooglibili, non il numero di byte restituiti al sistema.
+
+get_count e get_stats descrivono il collector. Non misurano dirrettamente RSS o tutta la memoria nativa. 
+
+GC CICLICO: SOTRARRE I RIFERIMENTI INTERNI 
+Per intuire il GC ciclico, consirea un inseme candidato di contenitore. Una copia dei conteggi permette di sottrarre i riferimenti 
+provenienti da altri oggetti dello stesso insieme.
+
+Nel ciclo isolato ogni conteggio 1 diventa 0 nella copia. Non è una modifica ai refcount reali: serve a individuare gli ingressi [...]
+
+Tutti partono dalla radice e fanno la reachability.
+Perché fare così? e non farlo?
+
+Controlla degli oggetti di trovo, ma da dove parte gli oggetti di MARK e SWEEP? La root.
+La root è vecchio, se noi facciamo mark and sweep, non ha senso vedere gli old. I vecchi dobbiamo tenerli lontani.
+
+Cosa fa python? GC ciclico: sottrarre i riferimenti interni 
+Più spesso per i giovani e più spesso per i vecchi.
+
+Quanti sono le reference che arrivano da oggetti che appartengono a questo insieme è 1.
+Si fa la differenza e si dice "quante sono le frecce che arrivano" meno "quante sono le frecce sono dal sottoinsieme"
+
+Se la differenza è uguale a 0, l'oggetto ha frecce entranti ma arrivano da un sottoinsieme.
+
+CICLO DEL NIENTE, se invece non è così e rispetto al blocco di memoria mi sta arrivando una freccia dall'esterno, si ritrova con un uno 
+o due. C'è una che arriva a me che non fa parte dell'insieme. Allora l'insieme tutto sommato è ancora raggiungibile all'esterno-
+
+Insieme raggiungibile o no? 
+
+è legato al concetto di scalibilità: non parte dalla radice guardando tutto (FORWARD), questa parte è BACKWARD
+Approccio utilizzati per IA e pianificazioni automatica.
+
+Lista A → Lista B
+        ←
+A e B sono vivi grazie all'ingresso esterno
