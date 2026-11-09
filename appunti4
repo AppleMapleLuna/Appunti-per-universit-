@@ -177,3 +177,84 @@ Approccio utilizzati per IA e pianificazioni automatica.
 Lista A → Lista B
         ←
 A e B sono vivi grazie all'ingresso esterno
+
+Abbiamo visto modi per dire che un oggetto è da reclamare. alla fine, questi oggetti dove vengono allocati? I programmatori di alto 
+livelli non se ne occupano, ma è importante capire.
+
+Python, nella sua gestione della memoria, è molto semplice. È ovvio che python ha un memory model
+vantaggio: memory allocation, cross platform
+svantaggio: qualcuno si mette in mezzo a noi 
+
+cosa fa python? alloca la memoria in un'ARENA: una grande parte della memoria di RAM dove all'interno viene allocato altri sottoblocchi
+dell'arena chiamati POOL. Ogni POOL è associato a una classe (non classi python) di size.
+
+Arena [ Pool classe 32 [usato,libero,usato], Pool classe 48 [usato,usato,libero] ]
+Quando python alloca un oggetto, prende il POOL che gestisce blocchetti di tali dimensione e alloca là un blocchetto libero. 
+
+VANTAGGIO: Allineamento della memoria
+Quando python va ad allocare la memoria, ha un intero che va a chiedere i pool di int. Se non c'è l'ha chiede al blocco di memoria per 
+un intero. Quando chiede un altro intero va su quel POOL, non alla memoria o al processo.
+
+Molto utile per staccare da sistemi informativi performanti 
+
+FRAMMENTAZIONE ESISTE ANCHE QUA.
+RSS → RESIDENT SIC(?) SIZE
+
+Importante perché ha allocato, non che sta usando. Se il pool ha solo 3 blocchetti, userà 2 blocchetti di memoria. A seguito della 
+delocalizzazione controlla il numero di blocchetti.
+
+Quando un blocco di memoria è per noi deallocato, ma per il sistema operativo lui non se ne frega affatto perché occupa la stessa memoria 
+ovvero quante sono reclamate dal processo python per il suo utilizzo.
+
+In python si può fare questo genere di analisi 
+
+RSS è sempre maggiore uguale ala memoria effettiva di python.
+
+Se c'è qualche spazio può darsi che python li sta tenendo anche se è vuota.
+
+Ci sono modi anche per fare l'introspezione in python, in particolare:
+import sys 
+a = object()
+print(sys.getrefcount(a))
+
+possiamo ottenere le reference count dell'oggetto.
+Per object ci sono almeno due per il getref count oppure 3 (dipende dall'interprete)!
+
+USCIRE DALLO SCOPE LIBERA SEMPRE LA MEMORIA?
+def crea():
+    dati = [0]*1_000_000        # Ha un milione di 0
+    cache.append(dati)          # Lista di liste di 1 milione di 0  
+                                # Se fa extend, estende la lista e quindi gli elementi non ci sono
+
+cache = []
+crea()
+
+A causa del fatto che ha fatto l'append, rimane libero.
+Dati non esiste, ma l'oggetto può esistere. La vita è legata in base a chi ne fa l'uso.
+
+Cache conserva la lista creata dentro crea. Alla fine della funzione scompare il riferimento locale dati, ma il riferimento contenuto 
+nella lista globale resta.
+
+PRIMA MISURA, POI ATTRIBUISCI LA CAUSA 
+
+Leggere e ispezionare l'uso della memoria.
+
+tracemalloc → confronta snapshot 
+import tracemalloc 
+tracemalloc.start() # inizia sessione di monitoraggio della memoria
+prima = tracemalloc.take_snapshot()
+dati = [str(i) for i in range(100_000)]
+dopo = tracemalloc.take_snapshot()
+
+for stat in dopo.compare_to(prima,"lineno")[:3]:
+    print stat
+
+Requisito che python segue legato al fatto che vale solo esclusivamente per oggetti piccoli
+Python is occupa di oggeti con pool piccoli
+
+int → oggetto cadere
+Se l'intero è più di 400 mmb
+
+Non tutti gli oggetti di python sono bloccheti parti di pool 
+
+MISURA IL CONTEGGIO DEI RIFERIMENTI
