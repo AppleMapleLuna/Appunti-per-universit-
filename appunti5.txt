@@ -35,3 +35,140 @@ Oppure si può usare il breakpoint per farlo attivare sotto l'i-esima condizione
 cambia se faccio un step over invece di step in 
 ESEGUI TUTTA LA ESPRESSIONE, poi vai dal prossimo giro!
 
+Se non basta vedere le variabili oppure è il fatto che io devo chiedere alle variabili, si può fare qualcosa di reattivo
+Watch → somma = 10? True or False 
+
+Tutte le volte che il programma è in esecuzione, interessa il fatto che l'espressione viene valutata.
+
+ Chi dice dove sono gli argomenti? Il modo base tramite modulo sys 
+ format(sys.argv)
+
+ voti = [float(x) for x in sys.argv[1:]]
+ passiamo questi voti a lui e fa la media 
+ Invece di avere voti = [1,2,3], gli input vengono dati o da terminali o da GUI 
+
+ Mai far cambiare il codice sorgente all'utente
+
+ Lanciando il debugger, non è stato passato niente.
+
+ è un problema mentre si fa debugging non sarà solo una riga da lanciare, ci sono un botto di roba. 
+
+ Le configurazioni ci permettono di lanciare il programma.
+ Dentro a python c'è un JSON file chiamato launch.json
+Quello che ci piace di più è che con il comando $(comand:pickArgs) passa gli argomenti da terminale a script
+
+Se vogliamo debuggare una configurazione specifica, possiamo cambiare quella json
+Ogni args nel json è una lista con argomenti che passiamo separati da spazi 
+["1","2","3"]
+
+Anche nel debug mode ora abbiamo gli argomenti 
+
+Invece di fare debugging andando ad eseguire il file, passa gli argomenti che diamo 
+
+Ovviamente c'è tutto sulle slide 
+
+Se vogliamo non debuggare il breakpoint, ma anche delle stampe strategiche, ci sono STAMPE DI DEBUG 
+Se voglio stampare il conteggio come nel debug, aggiungiamo un LOG POINT con LOG MESSAGE dentro al debug 
+
+L'icona cambia 
+
+Si può fare assertions con 
+if __debug__:
+    assert somma>=0
+
+Non c'è nel codice, è banale è c'è. È vero ma metta caso che c'è qualche problema.
+Qualsiasi valore deve avere nessun effetto logico sulla correttezza del programma 
+
+Sia l'assert che le if possono avere le stesse condizioni, ma cambia il contesto
+
+Conteggio può essere 0? No, bisogna gestire.
+
+Questa condizione è necessaria per la funzione del programma?
+
+Se lancio il script, è per caso vero che lo script è più veloce?
+In generale possiamo averne tante e il discorso sarà quanto 
+
+Chiedersi l'ovvio è un'assert 
+
+Andando in avanti, il problema del debug è il fatto che è proattivo. Noi siamo quelli che debugghiamo il codice
+su esempi piccoli o cose complicate funziona, ma voglio provare che funzioni con una grande assunzione e voglio sentirmi più confidente.
+
+CICLO DI DEBUG 
+BUG - Caso riproducibile
+FIX - Cambio minimo 
+TEST - Protegge la regressione
+
+Unit test (integration test ) verifica una piccola unità
+- veloce (feedback frequente)
+- isolato (causa localizzabile)
+- deterministico (stesso input, stesso esito)
+TESTING 
+
+Caso, suite e runner 
+test case → scenario + aspettativa
+test suite → insieme organizzato
+test runner → esegue e riporta 
+
+In python questo è facile specialmente all'esame 
+FARE QUESTO.
+
+Fare una classe per testing 
+TestCase
+```
+import unittest 
+
+class TestSomma(unittest.TestCase):
+    def test_due_interi(self):
+        risultato = 2+3
+        self.assertEqual(risultato,5)
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+Differenza tra errori e fallimenti: fallimento = errore di esecuzione  all'interno al codice di test 
+
+crea una cartella chiamata test_suite 
+python di default usa il path locale. Quando il codice fa l'import di debug main va là.
+
+Ogni volta che qualcuno fa un push su github, lancia tutti i casi di test, passa? accetta, se no no.
+Sembra qualcosa di interessante.
+Non importa quello che si fa, per rendere le modifiche permanente il test deve passare.
+
+LA DISCOVERY TROVA FILE E METODI PER CONVENZIONE
+python -m unittest discover
+python -m unittest -b 
+python -m unittest tests.test_calcoli(ecc.)
+
+La presenza di test non garantisce che il codice sia corretta, ma fa la detection degli errori.
+Se i test passano, non vuol dire che il programma o il software sia corretto.
+
+AVVIA O FAI DEBUG DI UN SINGOLO TEST → slide numbero 21 
+
+USA L'ASSERTION PIU' INFORMATIVA 
+assertEqual → uguaglianza 
+assertTrue → booleano 
+assertIn → contenuto 
+assertAlmostEqual → Quasi uguale 
+assert Raises verifica tipo e contesto dell'errore 
+
+FAIL ed ERROR indicano cause diverse 
+OK → Aspettativa soddisfatta 
+FAIL → AssertionError del test 
+ERROR → Eccezione inattesa 
+SKIP → Caso non eseguito
+
+Obiettivo: vado a gestire tutte le funzionalità
+
+ULTIMO ASPETTO
+Fixture pulite rendono i test indipendenti
+
+class TestArchivio(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.schema = crea_schema()
+    def setUp(self):
+        self.archivio = Archivio(self.schema)
+    def tearDown(self):
+        self.archivio.close()
+
