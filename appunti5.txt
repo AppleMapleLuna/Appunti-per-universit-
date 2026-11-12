@@ -233,3 +233,11 @@ with open("prova.bin,"rb) as f:
     print(type(letti))
     print(letti == dati)
 
+ricordare l'ordine dei byte perché può essere interpretato diversamente.
+
+COSA SUCCEDE QUANDO ESEGUI WITH 
+1. __enter__()
+→ Preparare la risorsa. Il valore restituito è assegnato al nome dopo as.
+2. BLOCCO 
+→ Il corpo usa la risorsa. Può terminare o sollevare un'eccezione .
+3. oop 
