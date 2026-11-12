@@ -1,0 +1,37 @@
+12/11/2026
+DEBUG E UNIT TEST 
+
+Debugging = ciclo di ipotesi 
+
+Prepara VS Code per il debug python 
+
+Ci interessa catturare con il debugging 
+Ti ricordi dei breakpoint?
+
+Se ci sono eccezioni breakpoint si ferma 
+
+oltre a questo, una volta che noi siamo nel debugger possiamo vedere altre cose,
+in particolare il fatto che c'è la console terminale e quella di debug
+
+Quello che fa è interagire con il sistema in esecuzione per valutare espressioni 
+
+"Senti, siamo fermi qua: mi dici quanto vale queste variabili?"
+
+Breakpoint: lanciato il programma in debug mode, arriva qui. Se non raggiunge siamo da capo.
+
+Non è sempre il caso che vogliamo. Se vogliamo debuggare il codice solo per la somma in un certo range 
+Se la somma è almeno 10 allora voglio controllare
+
+BREAKPOINT → TASTO DESTRO → MODIFICA BREAKPOINT → Expression v (Break when expression evaluates to True):
+- somma > 10 
+
+Può sembrare banale, ma non lo è. È difficile trovare la configurazione esatta per l'errore.
+
+se mi interessa l'i-esima dell'elemento che ci serve, lanciando il debugger si ferma la prima volta che si incontra
+
+Una persona pigra usa gli operatori sopra per muoverci (f10 step over, esegue solo la prossima esecuzione)
+Oppure si può usare il breakpoint per farlo attivare sotto l'i-esima condizione 
+
+cambia se faccio un step over invece di step in 
+ESEGUI TUTTA LA ESPRESSIONE, poi vai dal prossimo giro!
+
