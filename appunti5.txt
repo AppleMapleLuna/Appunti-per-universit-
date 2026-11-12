@@ -172,3 +172,64 @@ class TestArchivio(unittest.TestCase):
     def tearDown(self):
         self.archivio.close()
 
+FILE I/O IN PYTHON 
+gestione del file sia in input che in output
+
+filesystem → path → entry 
+stream → Lettura o scrittura sequenziale
+processo → file scrittura o qualcosa del genere 
+
+UN PERCORSO INDICA DOVE APRIRE IL FILE 
+import os 
+
+nome = os.path.join("dati","input.txt")
+# dati è la path principale, è uguale a fare "dati/input.txt"
+
+with open(nome, "r", encoding="utf-8") as f:
+    print(f.readline())
+
+open() restituisce una riga del file aperto
+
+import os 
+
+if __name__ == "__main__":
+    name = os.path.join("dati","input.txt")
+    with open(nome,"r", encoding="utf-8") as f:
+        for line in f:
+            print(line.strip())
+Togliendo encoding, python fa assunzioni mettendo di base che la codifica del file è la codifica base del sistema 
+informativo.
+
+Si sceglie una modifica e si sceglie quella per tutte le meacchine,
+
+with open(os.math.join("dati","output.txt"),"w", encoding="utf-8") as f:
+    f.write(content)
+
+write → dammi un file f e ci sovrascrivo la stringa content (crea anche il file)
+
+La codifica che usiamo per python non ha niente a che fare con le stringhe in python.
+Python utilizza utf-8 per le stringhe 
+
+Se voglio solo aggiornare il file si usa "a" invece di "w"
+
+RELATIVO A COSA?
+posizione del file e del terminale è importante 
+
+
+LA MODALITA' DECIDE COSA PUO' ACCADERE 
+
+r = leggi, deve esistere 
+w = scrivi e tronca 
+a = aggiungi in coda 
+x = crea, fallisce se esiste 
+
+In binario leggi e scrivi bytes 
+dati = bytes([1,2,255])
+with open("prova.bin","wb") as f:   # wb = scrittura byte 
+    f.write(dati)
+
+with open("prova.bin,"rb) as f:
+    letti = f.read()
+    print(type(letti))
+    print(letti == dati)
+
