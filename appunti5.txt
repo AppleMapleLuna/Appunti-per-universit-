@@ -375,3 +375,11 @@ copia = pickle.loads(report)
 print(copia.nome,copia.file)        # Prova None 
 
 Facendo così gestiamo i file non pickleable 
+
+JSON E PICKLE A CONFRONTO 
+→ Uso di file insieme 
+→ JSON testo, pickle binario 
+→ Usano le stesse funzioni 
+→ JSON rappresenta solo valori rappresentabili, Pickle ha più tipi 
+→ JSON formato ispezionabile, pickle non si vede e ha funzioni diverse dell'interprete.
+
