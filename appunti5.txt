@@ -298,3 +298,80 @@ with open("projilo.json","r",encoding="utf-8") as f:
 
 print(copia) # {"nome":"Ada","punti":[1,2]}
 
+FILE.JSON
+{
+    "nome":"Mario",
+    "cognome":"Rossi",
+    "età":47
+}
+
+Si può vedere anche il tipo dei dati e una prova di un campo
+
+VANTAGGIO DI JSON → È altamente condividibile cross-platform
+
+Se si ha già un oggetto 
+
+import json 
+from profilo import Profilo 
+p= Profilo("Ada",3)
+with open("p.json","w",encoding="utf-8") as f:
+    json.dump(p,come_dati(),f)
+
+ed ecc.
+
+L'ALTRO MODO È PICKLE 
+Controparte: JSON permette di codificare i testi in modo strutturati e portabili, ma a volte non ci interessa 
+quello e ci interessa di più quan'è grande il file. Di solito si utilizzano metodologie una serializzazione.
+
+Oggetto complesso a volontà prendedndo una sequenza di dati e dandoci un oggetto primario.
+
+import pickle 
+dati = {"nome":"Ada","punti":(1,2)}
+
+ with open("profilo.pkl","wb",encoding="utf-8") as f:
+    pickle.dump(dati,f)
+
+with open("profilo.pkl","rb") as f:
+    copia = pickle.load(f)
+
+print(copia) # {"nome":"Ada","punti":(1,2)}
+SONO FATTE IN BINARIO, non c'è nessuna visualizzazionw
+
+wb per scrivere, rb per leggere 
+
+QUANDO UN OGGETTO E' SERIALIZZATO CON PICKLED
+Passa oggetto a dump → Stampa 
+
+
+def print(dati_caricati_pickle == Persona)
+
+importando pickle molte volte e facendo check
+
+Se con pickle codifico e decodifico un oggetto, qualsiasi custom object è di natura pickable? Sì, tranne:
+- txt io wrapper instances → Perché prima l'avevo fatto, a dopo non me lo fa più?
+    - Dopo l'open, il file è aperto. Il problema è che pickle vuole la serializzazione dell'oggeto se l'informazione è temporanea?
+- Contengono oggetti temporanee e legate al sistema operativo: file descriptor aperto legato al file.
+Come risolve python? non lo risolve. Si pul fare load, dump e open affinché sia pickleable
+
+Pickle: sava lo stato, lascia fuori il file  ?
+class Report:
+    def __init__(self,nome,file):
+        self.nome = nome 
+        self.file = file 
+
+    def __getstate__(self):     # Dice a pickle i campi dell'oggetto che vogliamo considerare
+        return {"nome":self.nome}
+
+    def __setstate__(self,dati):
+        self.nome = dati("nome")
+        self.file = None
+
+    
+import pickle 
+with open("demo-stato.txt","w",encoding="utf-8") as f:
+    report = Report("prova",f)
+    blob = pickle.dumps(report)         # Dump string
+copia = pickle.loads(report)
+print(copia.nome,copia.file)        # Prova None 
+
+Facendo così gestiamo i file non pickleable 
