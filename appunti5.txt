@@ -383,3 +383,20 @@ JSON E PICKLE A CONFRONTO
 → JSON rappresenta solo valori rappresentabili, Pickle ha più tipi 
 → JSON formato ispezionabile, pickle non si vede e ha funzioni diverse dell'interprete.
 
+ESERCIZIO 1 - SCRIVI LA MATRICE IN UN FILE DI TESTO 
+
+Implementa write_matrix(nome,matrix). La matrice in ingresso è rettangolare e ha almeno una riga e una colonna 
+
+values = [[1.5,2.0,3.25]], [[4.0,5.5,6.0]]
+write_matrix("matrice.txt",values)
+
+contenuto di matrice.txt 
+2 3
+1.5 2.0 3.25
+4.0 5.5 6.0
+
+1. Apri il file with open (...,"w",encoding="utf-8")
+2. Scrivi una prima riga con due interi separati da uno spazio: numero di righe e numero di colonne.
+3. Scrivi una riga di testo per ogni riga della matrice: valori separati da spazi. Apri il file nell'editor e 
+confrontalo con l'esempio.
+
