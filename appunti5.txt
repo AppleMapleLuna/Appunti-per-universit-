@@ -235,9 +235,66 @@ with open("prova.bin,"rb) as f:
 
 ricordare l'ordine dei byte perché può essere interpretato diversamente.
 
+16/11/2026
 COSA SUCCEDE QUANDO ESEGUI WITH 
 1. __enter__()
 → Preparare la risorsa. Il valore restituito è assegnato al nome dopo as.
 2. BLOCCO 
 → Il corpo usa la risorsa. Può terminare o sollevare un'eccezione .
-3. oop 
+3. __exit__()
+→ Esegue la pulizia, riceve tipo, eccezione e traceback
+
+Se __enter__ entra con successo, Python chiama __exit__ anche in caso di errore.
+
+CI SONO DEI METODI PARTICOLARI CHE POSSIAMO CHIAMARE 
+L'oggetto ritornato da open è un oggetto su cui possiamo fare a cose che assomigliano a with ed ecc.
+
+UNA CLASSE CHE SUPPORTA WITH 
+
+class Registro: 
+    def __init__(self,percorso):
+    self.percorso = percorso 
+
+    
+    def __enter__(self):
+        self.file = open(self.percorso,"a",encoding="utf-8")
+        return self 
+
+    def scrivi(self,testo):
+        self.file.written(testo + "\n")
+
+    def __exi__(self,exc.type):
+
+    with Registro("log.txt")
+
+    # Sarebbe stato un problema se la classe registro non viene chiuso
+
+with Registro("log.txt")
+    
+
+Mettendo il try catch vuol dire che prova il blocco. 
+ 
+ WITH SERVENO PER OGGETTI CHE CONTENGONO RISORSE, PER ESEMPIO COMUNICAZIONE, SOCKET, SINCRONIZZAZIONE, LOCK, MUTEX
+ TUtto quello che ha un inizio e una fine 
+
+ Qualcuno deve chiamare la CLOSE 
+
+ JSON E PICKLE
+
+ Queste due risondono a esigenze diverse 
+
+ ALL'ESAME → Identificare formato JSON e PICKLE 
+
+ JSON → Formato testuale strutturato. Il JSON non è tanto diverso che un dizionario.
+
+ import json 
+ dati = {"nome":"Ada","punti":(1,2)}
+
+ with open("profilo.json","w",encoding="utf-8") as f:
+    json.dump(dati,f,ensure_ascii=False,indent=2)       # ensure_ascii non è tanto interessante, indent è questione di visualizzazione per far sì che non mette tutto in una riga.
+
+with open("projilo.json","r",encoding="utf-8") as f:
+    copia = json.load                               
+
+print(copia) # {"nome":"Ada","punti":[1,2]}
+
