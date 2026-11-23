@@ -1,0 +1,129 @@
+19/1/2026
+codice
+
+23/11/2026
+performance: Python, C e il confine 
+ 
+Python, rispetto ad altri, ha un 
+CPROFILE → ANalisi più quantitativa riaapr
+
+inserisci altre info di cprofile 
+
+MICRO E MACRO → Misurano due scopi diversi 
+→ Micro ANalisi timeit - micro 
+python -m limit \
+    -s "from modulo import f" \ 
+    "f[1000]"
+# Molte ripetizioni
+# Setup separato 
+
+pER_COUNTER MACRO 
+from time import perf_counter 
+t0 = perf_counter()
+risultato = pipeline()
+elapsed = perf_counter() - t0
+
+Quanto tempo ci mette 43?
+
+Tutte le volte che dobbiamo fare analisi di un pezzo di codice tramite performance, 
+lo faremo tante volte e prenderemo una media. TIMEIT FA QUELLO
+
+Quelle serie ci possono mettere molte volte...
+
+Più è grande il numero, più si deve fare attenzione al rumore.
+
+MACRO lo utilizzeremo di più perché è ricco e ci permette di prendere il tento, 
+fare qualcosa e poi sottrarre
+
+perf_counter è preciso e non soffre di fusi orari.
+
+# BINDING (C aiuta solo se accelera il lavoro dominante )
+Quand'è che lo usiamo e perché? 
+
+BUON CANDIDATO
+kernel CPU-bound 
+dati numerici contigui 
+molto lavoro per chiamata
+algoritmo già adeguato 
+→ Qua python non è adeguato 
+
+CONFINE DOMINANTE 
+chiamate piccole e numerose 
+conversione di oggetti Python 
+I/O e attese asterne 
+hostpost non misurato 
+→ Qua abbiamo tante chiamate di una stessa cosa piccola ma tante 
+→ Solo su costanti 
+
+Idea base: vogliamo andare a sguinzagliare una computazione molto complicata da non farla gestire 
+e computare dall'interprete, ma dalla macchina.
+
+Tutto questo non cambia la complessità del programma.
+
+PROGETTA UNA FUNZIONE C CHE LAVORI SU UN INTERO BATCH
+#include <stdef.h>
+
+double sum_squares(const double *xs, size_t n){
+    double total = 0.0;
+    for (size_t i=0; i<n; ++i){
+        total+=xs[i]*xs[i];
+    }
+    return total;
+}
+
+Come uso questa funzione in python? BINDING!!!!!!!!!!!!!!!!
+In python si fa così
+
+SU LINUX 
+gcc -O3 -fPIC -shared \
+    -o libkernels.so kernels.c 
+
+-O3 → ottimizza il kernel 
+- libkernels.so → nome del file so output 
+- kernels.c → nome del file c input 
+
+gcc -shared -fPIC -o prova.so prova.c
+
+SU PYTHON 
+import ctypes as ct 
+from pathLib import Path 
+
+path = Path(__file__).with_name("prova.so")
+lib = ct.CDLL(str(path))    # → QUESTA PATH è una libreria che utilizziamo in C
+
+lib.sum_squares.argtypes = (               # Definiamo una funzione che richiamiamo in C 
+    ct.POINTER(ct.c_double), ct.c_size_t    # *xs è un puntatore per ricordarti
+)
+
+lib.sum_squares.restype = ct.c_double       # return type, ritornerà un double 
+
+# Questo rende le funzioni utilizzabili a python 
+# Ridefiniamo tutta la roba se no python non lo sa 
+
+lib.sum_squares.restype = ct.c_double 
+lib.square.argtypes = (ct.c_double,)
+lib.square.restype = ct.c_double 
+
+# Così abbiamo definito le funzioni C che si può richiamare in python 
+# Ora che sono pronti come le richiamiamo?
+
+values = (ct.c_double *4)(1.0,2.0,3.0,4.0)
+result = lib.sum_squares(values,len(values))
+print(result)
+
+# Python ha fatto una chiamata diretta facendo il codice C, sum_squares fa quello che fa e poi
+ ritorniamo in python 
+
+Il confine costa; il batch vince
+Se lo chiamiamo più volte, la conversione costa più tempo 
+
+ESERCIZIO 1  IMPLEMENTA IL PRODOTTTO DI MATRICI 
+In reference.py scrivi matmul_py(a_b)
+restituisci una nuova matrice come lista di liste, senza modificare gli input 
+→ Formula riga per colonna 
+C[i][j] è la somma di A[i][p] x B[p][j] per tutti gli indici p 
+→ Rifiuta con ValueError matrici vuote, righe di lunghezza diversa o colonne di A diverse 
+dalle righe di B 
+→ Esegui il controllo a sinistra. Prova anche matumul_py([[1.,2.]],[[3.]]): deve sollevare ValueError
+
+GUARDA GLI ES. SU 
