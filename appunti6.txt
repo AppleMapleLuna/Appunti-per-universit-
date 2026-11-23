@@ -126,4 +126,50 @@ C[i][j] è la somma di A[i][p] x B[p][j] per tutti gli indici p
 dalle righe di B 
 → Esegui il controllo a sinistra. Prova anche matumul_py([[1.,2.]],[[3.]]): deve sollevare ValueError
 
-GUARDA GLI ES. SU 
+GUARDA GLI ES. SU MOODLE 
+
+# ARGOMENTI DA LINEA DI COMANDO 
+Non verrà mai chiesto di implementare C ma quello detto può essere materia di esame 
+
+Dopo questo abbiamo tutto 
+
+LA SHELL COSTRUISCE I TOKEN; PYTHON RICEVE STRINGHE 
+TERMINALE 
+python report.py dati.csb \
+    -- limit 10 
+
+SYS.ARGV 
+["report.py",
+"dati,csb",
+"--limit","10"]
+
+Primo elemento sarà sempre il nome del file, tutti gli altri boh 
+sys.argv espone posizione e valore di ogni token 
+
+import sys 
+for indice,valore in enumerate(sys.argv):
+    print(indice, repr(valore))
+
+PARSING MANUALE 
+→ ASSENZA argomento mancante 
+→ CONVERSIONE "dieci" non è int 
+→ ORDINE flag e valori si combinano
+→ DIAGNOSTICA help ed errori coerenti
+
+argparse applica il contratto in tre passi 
+In python si utilizza il modulo argparse che aiuta a parsare il nostro input da linea di comando 
+
+1 - DEFINISCI (nomi,tipi,arietà [numero di argomenti] e help)
+2 - ANALIZZA ( parse_args valida argv)
+3 - USA namespace strutturato 
+
+help → ti dà i comandi
+
+ArgumentParser genera subito help e diagnostica 
+
+import argparse 
+parser = argparse.ArgumentParser(
+    prog="report",
+    description="Genera un report dai dati"
+)
+args = parser.parse_args()
