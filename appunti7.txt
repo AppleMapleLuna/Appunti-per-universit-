@@ -1,0 +1,392 @@
+26/11/2026
+FUNZIONALE IN PYTHON
+trasformazioni, iteratori e strumenti senza dogmi
+
+Paradigma di programmazione
+
+Quattro modi per organizzare un programma 
+1. Imperativo = Sequenza di cambiamenti ← Python  
+2. A oggetti = Stato + cambiamento ← Python 
+3. Funzionale = Trasformazioni di valori ← Quello che vediamo oggi ← Python 
+4. Logico = Fatti, regole e query ← Scriviamo il programma usando regole di deduzione. 
+
+I paradigmi non sono compartimenti stagni: Python permette di combinarli 
+
+Ogni paradigma ha vantaggi e svantaggi
+
+Come possiamo rendere più funzionale python? Questo verrà chiesto.
+
+IMPERATIVO: DESCRIVI COME CAMBIA LO STATO 
+totale = 0
+for valore in dati:
+if valore > 0:
+    totale+= valore 
+print(totale )
+
+Le istruzioni contano (il loro ordine conta)
+Lo stato del sistema cambia nel tempo (totale cambia nel tempo)
+
+Il programma ha dei side effects, ci sono effetti che vogliamo e che non vogliamo 
+
+IMPERATIVI VERSUS A OGGETTI 
+IMPERATIVO 
+totale = 0
+for x in dati;
+    totale += x 
+
+A OGGETTI 
+carrello.aggiung(x)
+carrelo.totale()
+
+FUNZIONALE E LOGICO SONO ENTRAMBI DICHIARATIVI
+Linguaggio dichiarativo? 
+Se voglio un goal e ti descrivo i step, dichiaro gli obiettivi e lasco l'interprete/risolutore/qualcun 
+altro risolve i step che servono per risolvere il problema.
+
+QUERY → 
+
+FUNZIONALE 
+tante chiamate di funzioni 
+risultato = f(g(dati))
+
+LOGICO 
+regola(x) :- fatto(x)
+ricerca di soluzione
+
+I LINGUAGGI OCCUPANO UN CONTINUUM 
+Funzionale forte = Haskell
+Famiglia LISP = Scheme, Clojure 
+Multi-Paradigma = Python, JavScript,Scala
+
+Stile funzionale 
+AGGIORNA 
+risultati = []
+for x in dati:
+    risultati.append(x*2)
+
+TRASFORMA 
+risultati = [x*2 for x in dati]
+
+Entrambi casi sono corretti, la seconda enfatizza la relazione input output 
+Quello che ci cambia è che risultati nel tempo si cambia evolvendosi.
+
+In TRASFORMA non ci sono side effects.
+
+Programmazionee funzionale = creiamo sempre una nuova senza mutarla
+
+STESSI INPUT = Stesso risultato  (deterministicom stess)
+NESSUN EFFETO = Non modifica stato esterno 
+COMPOSIZIONE = Si ragiona localmente 
+
+PUREZZA RENDE ESPLICITE LE DEFINIZIONI 
+toatle = 0
+def aggiungi (x):
+global totale 
+totale += x 
+
+
+def aggiungi(totale,x):
+    return totale + x 
+
+
+~
+# qualsiasi combinazione, cambia il sistema 
+totale = 0 
+def aggiungi(x):
+    glboal totale 
+    totale += x 
+    return totale 
+aggiungi(10)
+aggiungi(10) # totale = 20
+# SIDE EFFECT 
+
+# deterministica e pura
+def aggiungi_f(x,y):
+    return x+y
+
+aggiungi_f(aggiungi_f(0,10),10) # → 20
+# Nulla cambia 
+
+I CICLI SONO AMMESSI MA CAMBIA L'ASTRAZIONE 
+pari = []
+for x in dati:
+    if x%2=0:
+        pari.append(x)
+
+pari = [x for x in dati x%2==0]
+
+LE FUNZIONI SONO VALORI DI ORDINE SUPERIORI 
+MUTABILITA': UNA SCELTA
+ 
+È più facile pensare a oggetti 
+
+def ordina(xs):
+    xs.sort()
+    return xs
+    # non volevo che la modificasse, ma è più veloce perché la seconda crea una nuova variabile
+
+def ordinati(xs):
+    return  sorted(xs)
+
+FATTORIALE 
+Iterativa = accumulatore + ciclo 
+RICORSIVA
+LIBRERIA 
+
+Funzionale dice: non uso cicli: uso funzioni 
+
+def fattoriale(n):
+    if n<0:
+        raise ValueError("n negativo")
+    if n<=1:
+        return 1
+    return n*fattoraile(n-1)
+
+fattoriale(5)
+# Funzione deterministica, pura (non modifica nulla)
+
+La ricorsione costa però, ci sono catene di memoria in memoria.
+
+PYTHON NON OTTIMIZZA LA TAIL RECURSION, ovvero c'è da attendere perché mentre fa la ricorsione 
+c'è tutta la memoria 
+
+STACK = un frame per chiamata 
+LIMITE = profondità finita
+SCELTA PRATICA = Ciclo o libreria per grandi n
+
+COMPROMESSI
+- Leggibilità
+- Debug 
+- copie e allocazioni 
+- Ibrido 
+
+cassetta degli attrezzi 
+
+List comprehension legge come una pipeline 
+set e dict comprehension cambiano il contenitore 
+guardare l'ordine di for 
+coppie = [(x,y) for x in xs, for y in ys]
+lambda crea una piccola funzione anonima 
+
+doppio = lambda x: x*2
+doppio(4)
+
+mappe e filtri 
+doppi = map(lambda x: x*2, dati)
+pari = filter(lambda x: x%2==0)
+next(doppi)
+list(pari)
+
+MAP/REDUCE → ESAME 
+f: elemento → valore 
+map(f,dati) # nuova sequenza di mappa
+
+reduce 
+g: accumulatore, valore 
+→ accumulatore 
+
+PIPELINE: filtra, trasforma, aggrega
+from functools import reduce 
+
+pari = filter(lambda x:x%2==0,dati)
+quadrati = map(lambda x:x*x, pari)
+totale = reduce(lambda a,x:a+x,quadrati,0)
+
+reduce comprime una sequenza passo dopo passo 
+filtro → numeri pari 2,4,6
+quadrati → 4,16,36
+totale → svisceriamo le sequenze prendendo gli elementi 
+
+
+from functools import reduce 
+prodotto = reduce(
+    lambda acc,x:acc*x,
+    [2,3,4],
+    1,
+)
+# 24
+
+reduce(lambda a,x:a+x,[1,2,3,4],0)
+
+0+1 = 1
+1+2 = 3
+3+3 = 6
+6+4 = 10
+
+CHE COSA ACCADE SULLA LISTA VUOTA?
+
+from functools import reduce 
+reduce(lambda a,x:a+x,[1,2,3])  # ritorna 6
+reduce(lambda(a,x:a+x,[]))  # eccezione perché list avuota 
+
+La seconda dà eccezione 
+
+L'initializer entra prima di tutti gli elementi 
+
+Somma e unione: usa anche API specifiche 
+sum([1,2,3,4])  # 10
+set().union(
+    {1,2},{2,3}
+)   # {1,2,3}
+
+eval valuta una singola espressione 
+risultato = eval("1+2*3") # 7
+eval("x=1") # errore 
+
+GLOBALS E LOCALS CONTROLLANO I NOMI VISIBILI ( {} )
+espressione = "prezzo * quantita" 
+contesto = {"prezzo":12,"quantita":3}
+
+valore = eval(espressione,{},contesto)  # 36
+
+EVAL SU INPUT NON FIDATO E' ESECUZIONE DI CODICE 
+Rischio = accesso a oggetti e capacit
+non basta globals/locals ridotti
+Alternative = parser dedicato ast.literal_eval
+
+ast.literal_eval accetta solo strutture letterali supportate, non formule arbitrarie
+
+exec esegue una suite di istruzioni
+eval("1+2")         # 3
+exec("x=1\ny=x+2")  # restituisce none 
+
+Una un namespace esplicito con exec 
+
+codice = ""
+risultato = base * altezza / 2
+namespace = {"base":6,"altezza":4}
+exec(codice;{},namespace)
+
+namespace["risultato"]  # 12.0
+
+COMPILE 
+produce un code object riusabile 
+
+programma = compile(
+    "risultato = x*2", 
+    "<formula>",
+    "exec",
+)
+
+ns = {"x":6}
+exec(programma,{},ns)
+print(ns["risultato"])  # 12
+
+
+COMPILE RICHIEDE SOURCE, FILENAME E MODE 
+compile(source,filename,mode)
+
+STRINGA 
+compile("x+1",
+    "<espr>","eval")
+
+compile(src,"<regola-prezzi>","exec")
+
+Il nome è descrittivo e non deve corrispondere a un file reale.
+
+# functools aggiunge strumenti a funzioni e callable
+
+CONFIGURARE partial e partialmethod 
+ORDINARE cmp_to_key e total_ordering 
+QUESTA ROBA cache lru_cache
+
+FUNZIONE 
+def potenza(base,esponente):
+    return base ** esponente 
+
+SPECIALIZZAZIONE
+quadrato = partial(potenza, esponente=2)   # ti fisso l'esponente, da ora in poi sarà 2.
+Ho creato una funzione che da adesso in poi prenderà e la eleverà al quadrato 
+
+
+def potenza(base,esponente):
+    return base ** esponente 
+quadrato = partial(potenza, esponente=2)
+print(f"il quadrato di 3 è {quadrato(3)}")
+
+
+partial evita wrapper ripetitivi 
+
+from functools import partial 
+
+def somma(x,y):
+    return x+y 
+
+incrementa = partial(somma,y=1)
+
+incrementa(10)
+incrementa.func is somma # True 
+
+
+def my_partial(fun,*args,**kwargs):
+    def wrapper(*fargs,**fkwargs):
+        new_kwargs = {**kwargs,**fkwargs}
+
+
+partialmethod rispetta il binding dei metodi 
+
+cmp_to_key adatta comparator legacy 
+
+COMPARATOR  = confronta a e b 
+ADATTOR = cmp_to_key(cmp)
+SORTING API = riceve una chiave
+
+KEY FUNCTION 
+sorted(parole,key=str.casefold) # Ordina i caratteri della stringa rispetto l'upper e lowercase 
+COMPARATOR
+cmp(a,b)    # negativo, zero positivo
+
+altre chiavi?
+key=abs # non vede il negativo 
+key = lambdax:x[1]
+
+cmp_to_key collega il comparator a sorted 
+
+def confronta(a,b):
+    return a>b
+sorted([4,1,3,2], key=cmp_to_key(confronta))
+# [1,2,3,4]
+
+TOTAL_ORDERING 
+DEFINISCI 
+__eq__ + uno tra lt/le/gt/ge 
+DECORATOR 
+@total_ordering
+OTTIENI
+gli altri metodi 
+
+Possiamo prendere una qualsiasi classe che sia almeno uno con un metodo di confronto, il total ordering 
+definisce tutte le altre 
+
+Ti dà il portere di fare alice == alice, alice<alice o qualcosa del genere 
+
+@total_ordering
+class Persona:
+    ecc...
+
+MEMOIZATION
+riusa risultati di chiamate equivalenti
+
+from functools import lru_cache 
+@lru_cache(maxsize=128) # MASSIMO 128 CHIAMATE DIVERSE
+def fib(n)
+    if n<2:
+        return 2
+    return fib(n-1+fib(n-2))
+fib(30)
+fib.cache_info()
+
+AIUTA AD OTTIMIZZARE TRAMITE LRU_CACHE 
+E' UNA CACHE CHE TIENE TRACIA DELLE CHIAMATE CHE ABBIAMO FATTO ALLA FUNZIONE 
+
+Raggiunto alle 128 chiamate, cancella la memoria più vecchia
+
+con la cache finisce SUBITO
+cache si salva input e output 
+
+Quando ha già calcolato qualcosa, non rifà i calcoli, li riutilizza dalla cache 
+Se fai print non perde tempo
+
+Problema: tutto si basa su una assunzione che la funzione è pura.
+non ripete la stessa istruzione, usa quella della cache. Quindi per una variabile è diversa...
+
